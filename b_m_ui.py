@@ -11,7 +11,7 @@ class BoneMergerPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label(text="Parent constraint")
+        row.label(text="Parent and constraint")
         row = layout.row()
         row.prop(context.window_manager, 'bm_target_1', text='From', icon='ARMATURE_DATA')
         if context.window_manager.bm_target_1:

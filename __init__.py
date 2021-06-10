@@ -4,7 +4,7 @@ bl_info = {
     "version": (1, 0),
     "blender": (2, 80, 0),
     "location": "View3D > Bone Merger",
-    "description": """Adds some useful geometry tools""",
+    "description": """Creates a chain of parenting between two bones, placing two intermediary empties""",
     "warning": "",
     "doc_url": "",
     "category": "Rigging",

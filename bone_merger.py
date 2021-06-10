@@ -5,7 +5,7 @@ class BoneMergerOperator(bpy.types.Operator):
     """Creates a parenting chain as follows: 
     bone in starting bone prop -> empty -> empty -> bone in  target bone prop"""
     bl_idname = "b_m.parent_constraint"
-    bl_label = "Parent Constraint"
+    bl_label = "Parent and Constraint"
     
     bl_options = {'REGISTER', 'UNDO'}
     
