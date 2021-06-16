@@ -13,39 +13,59 @@ class BoneMergerPanel(bpy.types.Panel):
         row = layout.row()
         row.label(text="Parent and constraint")
         row = layout.row()
-        row.prop(context.window_manager, 'bm_target_1', text='From', icon='ARMATURE_DATA')
-        if context.window_manager.bm_target_1:
+        row.prop(context.window_manager, 'bm_target_parent', text='Parent', icon='ARMATURE_DATA')
+        if context.window_manager.bm_target_parent:
             row = layout.row()
-            row.prop_search(context.window_manager, "bm_subtarget_1", context.window_manager.bm_target_1.data, "bones", text="")
+            row.prop_search(context.window_manager, "bm_subtarget_parent", context.window_manager.bm_target_parent.data, "bones", text="")
         row = layout.row()
-        row.prop(context.window_manager, 'bm_target_2', text='To', icon='ARMATURE_DATA')
-        if context.window_manager.bm_target_2:
+        row.prop(context.window_manager, 'bm_target_child', text='Child', icon='ARMATURE_DATA')
+        if context.window_manager.bm_target_child:
             row = layout.row()
-            row.prop_search(context.window_manager, "bm_subtarget_2", context.window_manager.bm_target_2.data, "bones", text="")
+            row.prop_search(context.window_manager, "bm_subtarget_child", context.window_manager.bm_target_child.data, "bones", text="")
+            
+        row = layout.row()
+        row.prop(context.window_manager, 'bm_use_snap')
         row = layout.row()
         row.operator("b_m.parent_constraint")
 
 #TODO: add descriptions
 def properties_register():
-    bpy.types.WindowManager.bm_target_1 = bpy.props.PointerProperty(type=bpy.types.Object,
+    bpy.types.WindowManager.bm_target_parent = bpy.props.PointerProperty(type=bpy.types.Object,
                                                 name='Starting armature', 
-                                                description="")
-    bpy.types.WindowManager.bm_subtarget_1 = bpy.props.StringProperty(default="",
+                                                description="Starting armature")
+    bpy.types.WindowManager.bm_subtarget_parent = bpy.props.StringProperty(default="",
                                                 name='Starting bone', 
-                                                description="")
-    bpy.types.WindowManager.bm_target_2 = bpy.props.PointerProperty(type=bpy.types.Object,
+                                                description="Starting bone")
+    bpy.types.WindowManager.bm_target_child = bpy.props.PointerProperty(type=bpy.types.Object,
                                                 name='Target armature', 
-                                                description="")
-    bpy.types.WindowManager.bm_subtarget_2 = bpy.props.StringProperty(default="",
+                                                description="Target armature")
+    bpy.types.WindowManager.bm_subtarget_child = bpy.props.StringProperty(default="",
                                                 name='Target bone', 
-                                                description="")
+                                                description="Target bone")
     bpy.types.WindowManager.intlist = bpy.props.IntProperty(default=0,
                                                 name='intlist', 
                                                 description="intprop for list")     
+    bpy.types.WindowManager.bm_use_snap = bpy.props.BoolProperty(default=False,
+                                                name='Snap empty on parent', 
+                                                description="If checked, the child bone's empty gets put in the parent's position.")   
+    bpy.types.Bone.bm_external_parent = bpy.props.StringProperty(default="",
+                                                name='External parent', 
+                                                description="External parent")
+    bpy.types.Bone.bm_external_armature = bpy.props.StringProperty(default="",
+                                                name='External armature', 
+                                                description="External armature")       
+    bpy.types.Bone.bm_child_empty = bpy.props.StringProperty(default="",
+                                                name='Child empty', 
+                                                description="Child empty")     
+    bpy.types.Bone.bm_parent_empty = bpy.props.StringProperty(default="",
+                                                name='Parent empty', 
+                                                description="Parent empty")                                 
 
 def properties_unregister():
-    del bpy.types.WindowManager.bm_target_1
-    del bpy.types.WindowManager.bm_subtarget_1
-    del bpy.types.WindowManager.bm_target_2
-    del bpy.types.WindowManager.bm_subtarget_2
+    del bpy.types.WindowManager.bm_target_parent
+    del bpy.types.WindowManager.bm_subtarget_parent
+    del bpy.types.WindowManager.bm_target_child
+    del bpy.types.WindowManager.bm_subtarget_child
     del bpy.types.WindowManager.intlist
+    del bpy.types.PoseBone.bm_external_armature
+    del bpy.types.PoseBone.bm_external_parent
