@@ -3,7 +3,7 @@ import bpy
 class BoneMergerPanel(bpy.types.Panel):
     """Creates a Panel that houses the buttons  """
     bl_label = "Bone Merger"
-    bl_idname = "OBJECT_PT_MBPanel"
+    bl_idname = "OBJECT_PT_BMPanel"
     bl_space_type = 'VIEW_3D'
     bl_category = "Bone Merger"
     bl_region_type = 'UI'

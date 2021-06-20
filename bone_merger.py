@@ -28,7 +28,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
     if bm_parent_empty != "":
         empty1 = bpy.data.objects[bm_parent_empty]
     else:
-        empty1 = bpy.data.objects.new( bone_parent, None )
+        empty1 = bpy.data.objects.new( arm_parent.name + "_" + bone_parent, None )
         empty1.empty_display_type = 'CUBE'
         bpy.context.scene.collection.objects.link(empty1)
         matrix_1 = arm_parent.pose.bones[bone_parent].matrix.copy()
@@ -37,7 +37,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
     if bm_child_empty != "":
         empty2 = bpy.data.objects[bm_child_empty]
     else:
-        empty2 = bpy.data.objects.new(bone_child, None )
+        empty2 = bpy.data.objects.new(arm_child.name + "_" + bone_child, None )
         empty2.empty_display_type = 'SPHERE'
         bpy.context.scene.collection.objects.link(empty2)
         matrix_2 = arm_child.pose.bones[bone_child].matrix.copy()
@@ -67,9 +67,11 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
     empty2.matrix_world = empty2_mat_bk
 
     #set the external parent and empty properties
+    #print(arm_child.data.bones[bone_child].bm_external_armature, arm_child.data.bones[bone_child].bm_external_parent, arm_child.data.bones[bone_child].bm_parent_empty)
     arm_child.data.bones[bone_child].bm_external_armature = arm_parent.name
     arm_child.data.bones[bone_child].bm_external_parent = bone_parent
     arm_child.data.bones[bone_child].bm_child_empty = empty2.name
     arm_child.data.bones[bone_child].bm_parent_empty = empty1.name
+    #print(arm_child.data.bones[bone_child].bm_external_armature, arm_child.data.bones[bone_child].bm_external_parent, arm_child.data.bones[bone_child].bm_parent_empty)
     
     return
