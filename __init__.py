@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Bone Merger Package",
     "author": "Betti",
-    "version": (1, 1),
+    "version": (1, 2),
     "blender": (2, 80, 0),
     "location": "View3D > Bone Merger",
     "description": """Creates a chain of parenting between two bones, placing two intermediary empties""",
@@ -12,6 +12,14 @@ bl_info = {
 
 
 import bpy
+from importlib import reload
+
+from . import b_m_ui
+from . import bone_merger
+
+reload(b_m_ui)
+reload(bone_merger)
+
 from .b_m_ui import *
 from .bone_merger import *
 
