@@ -30,6 +30,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
             bm_parent_empty = arm_child['bm_parent_empty']
         else:
             bm_parent_empty = ""
+
         if 'bm_child_empty' in arm_child.keys():
             bm_child_empty = arm_child['bm_child_empty']
         else:
@@ -95,6 +96,8 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
         arm_child.data.bones[bone_child].bm_external_armature = arm_parent.name
         if bone_parent != "":
             arm_child.data.bones[bone_child].bm_external_parent = bone_parent
+        else:
+            arm_child.data.bones[bone_child].bm_external_parent = ""
         arm_child.data.bones[bone_child].bm_child_empty = empty2.name
         arm_child.data.bones[bone_child].bm_parent_empty = empty1.name
     else:
@@ -103,10 +106,58 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
         arm_child["bm_parent_empty"] = empty1.name
         if bone_parent != "":
             arm_child["bm_external_parent"] = bone_parent
+        else:
+            if 'bm_external_parent' in arm_child.keys():
+                del arm_child["bm_external_parent"]
+            
 
     #print(arm_child.data.bones[bone_child].bm_external_armature, arm_child.data.bones[bone_child].bm_external_parent, arm_child.data.bones[bone_child].bm_parent_empty)
     
     return
 
-def b_m_boneless(parent, child):
-    return
+def b_m_checker():
+    """Checks all the bone merger parenting relations in the scene. Returns dictionary -  child name: relationship details (5 props + bone_or_obj)"""
+    bm_chk_dict = {}
+    # THIS IS THE OUTPUT DICTIONARY STRUCTURE
+    # { name: [
+    #0 bone_or_obj
+    #1 arm_child 
+    #2 parent_empty
+    #3 child_empty
+    #4 arm_parent
+    #5 bone_parent
+    # ]  }
+    for obj in bpy.context.scene.objects:
+        if not 'bm_external_armature' in obj.keys():
+            continue
+        print(obj) #check if it's not processing all objects but only useful ones
+        parent_empty = ""
+        child_empty = ""
+        arm_parent = ""
+        bone_parent = ""
+        if 'bm_parent_empty' in obj.keys():
+            parent_empty = obj['bm_parent_empty']
+        if 'bm_child_empty' in obj.keys():
+            child_empty = obj['bm_child_empty']
+        if 'bm_external_armature' in obj.keys():
+            arm_parent = obj['bm_external_armature']
+        if 'bm_external_parent' in obj.keys():
+            bone_parent = obj['bm_external_parent']
+        
+        bm_chk_dict[obj.name] = ['OBJ', "", parent_empty, child_empty, arm_parent, bone_parent]
+    
+    for armature in [arm for arm in bpy.context.scene.objects if arm.data in bpy.data.armatures.values()]:
+        for bone in armature.data.bones:
+            if bone.bm_external_armature == "":
+                continue
+            arm_child = armature.name
+            parent_empty = bone.bm_parent_empty
+            child_empty = bone.bm_child_empty
+            arm_parent = bone.bm_external_armature
+            bone_parent = bone.bm_external_parent
+
+            bm_chk_dict[bone.name] = ['BONE', arm_child, parent_empty, child_empty, arm_parent, bone_parent]
+
+    return bm_chk_dict
+
+
