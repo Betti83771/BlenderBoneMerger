@@ -27,6 +27,84 @@ class BoneMergerPanel(bpy.types.Panel):
         row.prop(context.window_manager, 'bm_use_snap')
         row = layout.row()
         row.operator("b_m.parent_constraint")
+        row = layout.row()
+        row.operator("wm.bm_manage_parenting")
+
+class BMParentingLink(bpy.types.PropertyGroup):
+    bone_parent: bpy.props.StringProperty(name='Parent bone', 
+                                          description="Starting bone")
+    bone_child: bpy.props.StringProperty(name='Child bone', 
+                                         description="Target bone")
+    arm_parent: bpy.props.StringProperty(name='Parent armature', 
+                                                description="Starting armature")
+    arm_child: bpy.props.StringProperty(name='Child armature')
+    empty_parent: bpy.props.StringProperty(name='Empty parent', 
+                                                description="")
+    empty_child: bpy.props.StringProperty(name='Empty child', 
+                                                description="")
+
+
+class BMManageParenting(bpy.types.Operator):
+    bl_idname = "wm.bm_manage_parenting"
+    bl_label = "Manage Parenting"
+    bl_options = {'UNDO'}
+
+    links: bpy.props.CollectionProperty(type=BMParentingLink)
+    register_new_link: bpy.props.BoolProperty(default=False)
+    try_auto_link: bpy.props.BoolProperty(default=False)
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.label(text="All Bone Merger parentings")
+
+        row = layout.row()
+        box = layout.box()
+        split= box.split()
+        col1 = split.column()
+        col2 = split.column()
+        col3 = split.column()
+        col4 = split.column()
+        col5 = split.column()
+        col6 = split.column()
+        for link in self.links:
+            col1.row().label(text=link.bone_child)
+            col2.row().label(text=link.arm_child)
+            col3.row().label(text=link.empty_child)
+            col4.row().label(text=link.empty_parent)
+            col5.row().label(text=link.arm_parent)
+            col6.row().label(text=link.bone_parent)
+        
+        row = layout.row()
+        row.prop(self, "register_new_link", text="Register new parenting", icon='ADD')
+        row = layout.row()
+        row.prop(self, "try_auto_link", text="Try auto recognize parenting", icon='ADD')
+
+    def check(self, context):
+        changed = False
+        if self.register_new_link:
+            self.register_new_link = False
+            #call operator /func /whatever
+            changed = True
+
+        if self.try_auto_link:
+            self.try_auto_link = False
+            #call operator /func /whatever
+            changed = True
+    
+        return changed
+
+    def execute(self, context):
+        return {'FINISHED'}
+    
+    def invoke(self, context, event):
+        if not self.links:
+            #populate self.links func
+            self.links.add()
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self, width=500)
+
+
 
 #TODO: add descriptions
 def properties_register():

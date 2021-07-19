@@ -27,9 +27,13 @@ def register():
     properties_register()
     bpy.utils.register_class(BoneMergerOperator)
     bpy.utils.register_class(BoneMergerPanel)
+    bpy.utils.register_class(BMParentingLink)
+    bpy.utils.register_class(BMManageParenting)
 
 
 def unregister():
+    bpy.utils.unregister_class(BMParentingLink)
+    bpy.utils.unregister_class(BMManageParenting)
     bpy.utils.unregister_class(BoneMergerPanel)
     bpy.utils.unregister_class(BoneMergerOperator)
     properties_unregister()
