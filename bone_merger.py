@@ -201,3 +201,56 @@ def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent, arm_child_str):
             if 'bm_external_parent' in arm_child.keys():
                 del arm_child["bm_external_parent"]
     return
+
+
+def b_m_auto_recognize_parenting():
+    # THIS IS THE OUTPUT DICTIONARY STRUCTURE
+    # { name: [
+    #0 arm_child 
+    #1 child_empty
+    #2 parent_empty
+    #3 arm_parent
+    #4 bone_parent
+    # ]  }
+    found_relations = {}
+
+    # try to see if a bone is child 
+    empties = [empty for empty in bpy.data.objects if empty.data == None]
+    for armature in [arm for arm in bpy.context.scene.objects if arm.data in bpy.data.armatures.values()]:
+        for pbone in armature.pose.bones:
+            
+            if armature.data.bones[pbone.name].bm_external_armature != "":
+                continue
+
+            empty_target_consts = []
+            for const in pbone.constraints:
+                try:
+                    if const.target in empties:
+                        empty_target_consts.append(const)
+                except AttributeError:
+                    continue
+            
+            for const in empty_target_consts:
+                if const.target.parent in empties:
+                    for parentconst in  const.target.parent.constraints:
+                        try:
+                            if parentconst.target:
+                                found_relations[pbone.name] = [armature.name, const.target.name, const.target.parent.name, parentconst.target.name, parentconst.subtarget]
+                                
+                                const.name = "bm_const2"
+                                parentconst.name = "bm_const1"
+                        except AttributeError:
+                            continue
+    
+    #set the found relations
+    
+    for child in found_relations.keys():
+        bone = bpy.data.objects[found_relations[child][0]].data.bones[child]
+        bone.bm_external_armature = found_relations[child][3]
+        bone.bm_external_parent = found_relations[child][4]
+        bone.bm_parent_empty = found_relations[child][2]
+        bone.bm_child_empty = found_relations[child][1]
+
+    #TODO: try to see if a object is a child
+
+    return found_relations

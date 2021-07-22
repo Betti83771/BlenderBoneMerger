@@ -17,11 +17,13 @@ from importlib import reload
 from . import b_m_ui
 from . import bone_merger
 
-reload(b_m_ui)
 reload(bone_merger)
+reload(b_m_ui)
 
-from .b_m_ui import *
+
 from .bone_merger import *
+from .b_m_ui import *
+
 
 def register():
     properties_register()

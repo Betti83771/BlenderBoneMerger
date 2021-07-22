@@ -1,5 +1,5 @@
 import bpy
-from .bone_merger import b_m_checker, b_m_func, b_m_parent_rel_remove
+from .bone_merger import b_m_checker, b_m_func, b_m_parent_rel_remove, b_m_auto_recognize_parenting
 
 class BoneMergerPanel(bpy.types.Panel):
     """Creates a Panel that houses the buttons  """
@@ -139,7 +139,13 @@ class BMManageParenting(bpy.types.Operator):
 
         if self.try_auto_link:
             self.try_auto_link = False
-            #call operator /func /whatever
+            self.links.clear()
+            found_relations = b_m_auto_recognize_parenting()
+            if found_relations == {}:
+                def  message(self, context):
+                   self.layout.label(text="No relations found", icon='INFO')
+                context.window_manager.popup_menu(message)
+            self.links_populate()
             changed = True
 
         for linki, link in enumerate(self.links):
