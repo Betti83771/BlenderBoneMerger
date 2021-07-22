@@ -1,5 +1,5 @@
 import bpy
-from .bone_merger import b_m_checker
+from .bone_merger import b_m_checker, b_m_func, b_m_parent_rel_remove
 
 class BoneMergerPanel(bpy.types.Panel):
     """Creates a Panel that houses the buttons  """
@@ -70,7 +70,10 @@ class BMManageParenting(bpy.types.Operator):
 
                 new.arm_parent = bm_chk_dict[link][4]
 
-                new.arm_child = bm_chk_dict[link][1]
+                if bm_chk_dict[link][0] == 'BONE':
+                    new.arm_child = bm_chk_dict[link][1]
+                else:
+                    new.arm_child = link
 
                 new.empty_parent = bm_chk_dict[link][2]
 
@@ -86,35 +89,41 @@ class BMManageParenting(bpy.types.Operator):
         row = layout.row()
         row.label(text="Current scene: {0}".format(bpy.context.scene.name))
 
+        
 
-        row = layout.row()
-        box = layout.box()
-        split= box.split()
-        col1 = split.column()
-        col1.row().label(text="--Child Bone--")
-        col2 = split.column()
-        col2.row().label(text="--Child--")
-        col3 = split.column()
-        col3.row().label(text="--Child Empty--")
-        col4 = split.column()
-        col4.row().label(text="--Parent Emprty--")
-        col5 = split.column()
-        col5.row().label(text="--Parent--")
-        col6 = split.column()
-        col6.row().label(text="--Parent Bone--")
-        col7 = split.column()
-        col7.row().label(text="")
-        col8 = split.column()
-        col8.row().label(text="")
         for link in self.links:
-            col1.row().label(text=link.bone_child)
-            col2.row().label(text=link.arm_child)
-            col3.row().label(text=link.empty_child)
-            col4.row().label(text=link.empty_parent)
-            col5.row().label(text=link.arm_parent)
-            col6.row().label(text=link.bone_parent)
-            col7.row().prop(link, 'parenting_remove',  text="", icon='REMOVE')
-            col8.row().prop(link, 'parenting_update',  text="Update", toggle=True)
+            row = layout.row()
+            out_split=row.split(factor=0.85)
+            box = out_split.box()
+            split = box.split(align=True, factor=0.25)
+            col = split.column()
+            row1 = col.row()
+            row1.row().label(text="Child Bone:")
+            row2 = col.row()
+            row2.row().label(text="Child:")
+            row3 = col.row()
+            row3.row().label(text="Child Empty:")
+            row4 = col.row()
+            row4.row().label(text="Parent Emprty:")
+            row5 = col.row()
+            row5.row().label(text="Parent:")
+            row6 = col.row()
+            row6.row().label(text="Parent Bone:")
+        
+            col = split.column()
+            col.row().label(text=link.bone_child)
+            col.row().label(text=link.arm_child)
+            col.row().label(text=link.empty_child)
+            col.row().label(text=link.empty_parent)
+            col.row().label(text=link.arm_parent)
+            col.row().label(text=link.bone_parent)
+
+            col = out_split.column()
+            row = col.row()
+            row.prop(link, 'parenting_remove',  text="", icon='REMOVE')
+            row = col.row()
+            row.prop(link, 'parenting_update',  text="Update", toggle=True)
+
         
         row = layout.row()
         row.prop(self, "register_new_link", text="Register new parenting", icon='ADD')
@@ -133,17 +142,17 @@ class BMManageParenting(bpy.types.Operator):
             #call operator /func /whatever
             changed = True
 
-        for link in self.links:
+        for linki, link in enumerate(self.links):
             if link.parenting_remove:
                link.parenting_remove = False
-               #call operator /func /whatever
+               b_m_parent_rel_remove(link.bone_parent, link.bone_child,  link.arm_parent, link.arm_child)
+               self.links.remove(linki)
                changed = True 
 
             if link.parenting_update:
                link.parenting_update = False
-               #call operator /func /whatever
+               b_m_func(link.bone_parent, link.bone_child,  link.arm_parent, link.arm_child)
                changed = True 
-    
         return changed
 
     def execute(self, context):
@@ -153,7 +162,7 @@ class BMManageParenting(bpy.types.Operator):
     def invoke(self, context, event):
         #populate self.links func
         self.links_populate()
-        width = 800
+        width = 400
         wm = context.window_manager
         return wm.invoke_props_dialog(self, width=width)
 

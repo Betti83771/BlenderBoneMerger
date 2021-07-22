@@ -160,4 +160,44 @@ def b_m_checker():
 
     return bm_chk_dict
 
+def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent, arm_child_str):
+    arm_child = bpy.data.objects[arm_child_str]
+    if bone_child != "":
+        bm_parent_empty = arm_child.data.bones[bone_child].bm_parent_empty
+        bm_child_empty = arm_child.data.bones[bone_child].bm_child_empty
+    else:
+        if 'bm_parent_empty' in arm_child.keys():
+            bm_parent_empty = arm_child['bm_parent_empty']
+        else:
+            bm_parent_empty = ""
 
+        if 'bm_child_empty' in arm_child.keys():
+            bm_child_empty = arm_child['bm_child_empty']
+        else:
+            bm_child_empty = ""
+
+    bpy.data.objects.remove(bpy.data.objects[bm_parent_empty])
+    bpy.data.objects.remove(bpy.data.objects[bm_child_empty])
+
+    if bone_child != "":
+        const2 = next((const for const in arm_child.pose.bones[bone_child].constraints if const.name == 'bm_const2'), None)
+        arm_child.pose.bones[bone_child].constraints.remove(const2)
+    else:
+        const2 = next((const for const in arm_child.constraints if const.name == 'bm_const2'), None)
+        arm_child.constraints.remove(const2)
+
+    if bone_child != "":
+        arm_child.data.bones[bone_child].bm_external_armature = ""
+        arm_child.data.bones[bone_child].bm_external_parent = ""
+        arm_child.data.bones[bone_child].bm_child_empty = ""
+        arm_child.data.bones[bone_child].bm_parent_empty = ""
+    else:
+        del arm_child["bm_external_armature"]
+        del arm_child["bm_child_empty"]
+        del arm_child["bm_parent_empty"] 
+        if bone_parent != "":
+            del arm_child["bm_external_parent"]
+        else:
+            if 'bm_external_parent' in arm_child.keys():
+                del arm_child["bm_external_parent"]
+    return
