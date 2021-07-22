@@ -60,7 +60,7 @@ class BMManageParenting(bpy.types.Operator):
 
     links: bpy.props.CollectionProperty(type=BMParentingLink)
     register_new_link: bpy.props.BoolProperty(default=False)
-    try_auto_link: bpy.props.BoolProperty(default=False)
+    try_auto_link: bpy.props.BoolProperty(default=False, description="(Only works for bones for now)")
 
     def links_populate(self):
         self.links.clear()
@@ -160,7 +160,7 @@ class BMManageParenting(bpy.types.Operator):
         for linki, link in enumerate(self.links):
             if link.parenting_remove:
                link.parenting_remove = False
-               b_m_parent_rel_remove(link.bone_parent, link.bone_child,  link.arm_parent, link.arm_child)
+               b_m_parent_rel_remove(link.bone_parent, link.bone_child,  link.arm_parent, link.arm_child, link.relation_slot)
                self.links.remove(linki)
                changed = True 
 
