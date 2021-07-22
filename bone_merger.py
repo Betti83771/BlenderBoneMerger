@@ -15,16 +15,20 @@ class BoneMergerOperator(bpy.types.Operator):
         return context.window_manager.bm_target_parent and context.window_manager.bm_target_child
 
     def execute(self, context):
-        b_m_func(context.window_manager.bm_subtarget_parent, context.window_manager.bm_subtarget_child, context.window_manager.bm_target_parent, context.window_manager.bm_target_child)
+        b_m_func(context.window_manager.bm_subtarget_parent, context.window_manager.bm_subtarget_child, context.window_manager.bm_target_parent, context.window_manager.bm_target_child, context.window_manager.bm_relation_slot_ui)
         return {'FINISHED'}
 
 def snap_objs(to_snap, target):
     to_snap.matrix_world =  target.matrix_world
 
-def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
+def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i):
+    relation = next((rel for rel in arm_child.data.bones[bone_child].bm_relations if rel.bm_relation_slot == rel_i), None)
+    if not relation:
+        relation = arm_child.data.bones[bone_child].bm_relations.add()
+        relation.bm_relation_slot = rel_i
     if bone_child != "":
-        bm_parent_empty = arm_child.data.bones[bone_child].bm_parent_empty
-        bm_child_empty = arm_child.data.bones[bone_child].bm_child_empty
+        bm_parent_empty = relation.bm_parent_empty
+        bm_child_empty = relation.bm_child_empty
     else:
         if 'bm_parent_empty' in arm_child.keys():
             bm_parent_empty = arm_child['bm_parent_empty']
@@ -73,7 +77,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
         const2 = next((const for const in arm_child.constraints if const.name == 'bm_const2'), None)
     if not const1:
         const1 = empty1.constraints.new(type='COPY_TRANSFORMS')
-        const1.name = 'bm_const1'
+        const1.name = 'bm_const1_{0}'.format(str(rel_i).zfill(2))
     const1.target = arm_parent
     const1.subtarget = bone_parent
     if not const2:
@@ -81,7 +85,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
             const2 = arm_child.pose.bones[bone_child].constraints.new(type='COPY_TRANSFORMS')
         else:
             const2 = arm_child.constraints.new(type='COPY_TRANSFORMS')
-        const2.name = 'bm_const2'
+        const2.name = 'bm_const2_{0}'.format(str(rel_i).zfill(2))
     const2.target = empty2
     
 
@@ -91,15 +95,15 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
     empty2.matrix_world = empty2_mat_bk
 
     #set the external parent and empty properties
-    #print(arm_child.data.bones[bone_child].bm_external_armature, arm_child.data.bones[bone_child].bm_external_parent, arm_child.data.bones[bone_child].bm_parent_empty)
+   
     if bone_child != "":
-        arm_child.data.bones[bone_child].bm_external_armature = arm_parent.name
+        relation.bm_external_armature = arm_parent.name
         if bone_parent != "":
-            arm_child.data.bones[bone_child].bm_external_parent = bone_parent
+            relation.bm_external_parent = bone_parent
         else:
-            arm_child.data.bones[bone_child].bm_external_parent = ""
-        arm_child.data.bones[bone_child].bm_child_empty = empty2.name
-        arm_child.data.bones[bone_child].bm_parent_empty = empty1.name
+            relation.bm_external_parent = ""
+        relation.bm_child_empty = empty2.name
+        relation.bm_parent_empty = empty1.name
     else:
         arm_child["bm_external_armature"] = arm_parent.name
         arm_child["bm_child_empty"] = empty2.name
@@ -111,15 +115,13 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child):
                 del arm_child["bm_external_parent"]
             
 
-    #print(arm_child.data.bones[bone_child].bm_external_armature, arm_child.data.bones[bone_child].bm_external_parent, arm_child.data.bones[bone_child].bm_parent_empty)
-    
     return
 
 def b_m_checker():
     """Checks all the bone merger parenting relations in the scene. Returns dictionary -  child name: relationship details (5 props + bone_or_obj)"""
     bm_chk_dict = {}
     # THIS IS THE OUTPUT DICTIONARY STRUCTURE
-    # { name: [
+    # { (name, rel_i): [
     #0 bone_or_obj
     #1 arm_child 
     #2 parent_empty
@@ -127,7 +129,7 @@ def b_m_checker():
     #4 arm_parent
     #5 bone_parent
     # ]  }
-    for obj in bpy.context.scene.objects:
+    for obj in bpy.context.scene.objects: #NOT UPDATED
         if not 'bm_external_armature' in obj.keys():
             continue
         print(obj) #check if it's not processing all objects but only useful ones
@@ -148,19 +150,21 @@ def b_m_checker():
     
     for armature in [arm for arm in bpy.context.scene.objects if arm.data in bpy.data.armatures.values()]:
         for bone in armature.data.bones:
-            if bone.bm_external_armature == "":
+            if  len(bone.bm_relations) < 1:
                 continue
-            arm_child = armature.name
-            parent_empty = bone.bm_parent_empty
-            child_empty = bone.bm_child_empty
-            arm_parent = bone.bm_external_armature
-            bone_parent = bone.bm_external_parent
+            for rel in bone.bm_relations:
+                arm_child = armature.name
+                parent_empty = rel.bm_parent_empty
+                child_empty = rel.bm_child_empty
+                arm_parent = rel.bm_external_armature
+                bone_parent = rel.bm_external_parent
+                rel_i = rel.bm_relation_slot
 
-            bm_chk_dict[bone.name] = ['BONE', arm_child, parent_empty, child_empty, arm_parent, bone_parent]
+                bm_chk_dict[(bone.name, rel_i)] = ['BONE', arm_child, parent_empty, child_empty, arm_parent, bone_parent]
 
     return bm_chk_dict
 
-def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent, arm_child_str):
+def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent, arm_child_str): #NOT UPDATED
     arm_child = bpy.data.objects[arm_child_str]
     if bone_child != "":
         bm_parent_empty = arm_child.data.bones[bone_child].bm_parent_empty
@@ -205,7 +209,7 @@ def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent, arm_child_str):
 
 def b_m_auto_recognize_parenting():
     # THIS IS THE OUTPUT DICTIONARY STRUCTURE
-    # { name: [
+    # { (name, rel_i): [
     #0 arm_child 
     #1 child_empty
     #2 parent_empty
@@ -218,8 +222,7 @@ def b_m_auto_recognize_parenting():
     empties = [empty for empty in bpy.data.objects if empty.data == None]
     for armature in [arm for arm in bpy.context.scene.objects if arm.data in bpy.data.armatures.values()]:
         for pbone in armature.pose.bones:
-            
-            if armature.data.bones[pbone.name].bm_external_armature != "":
+            if len(armature.data.bones[pbone.name].bm_relations) > 1:
                 continue
 
             empty_target_consts = []
@@ -231,25 +234,33 @@ def b_m_auto_recognize_parenting():
                     continue
             
             for const in empty_target_consts:
+                rel_i = 0
                 if const.target.parent in empties:
                     for parentconst in  const.target.parent.constraints:
                         try:
                             if parentconst.target:
-                                found_relations[pbone.name] = [armature.name, const.target.name, const.target.parent.name, parentconst.target.name, parentconst.subtarget]
+                                found_relations[(pbone.name, rel_i)] = [armature.name, const.target.name, const.target.parent.name, parentconst.target.name, parentconst.subtarget]
                                 
-                                const.name = "bm_const2"
-                                parentconst.name = "bm_const1"
+                                const.name = 'bm_const2_{0}'.format(str(rel_i).zfill(2))
+                                parentconst.name = 'bm_const1_{0}'.format(str(rel_i).zfill(2))
+                                rel_i += 1
                         except AttributeError:
                             continue
     
     #set the found relations
     
-    for child in found_relations.keys():
-        bone = bpy.data.objects[found_relations[child][0]].data.bones[child]
-        bone.bm_external_armature = found_relations[child][3]
-        bone.bm_external_parent = found_relations[child][4]
-        bone.bm_parent_empty = found_relations[child][2]
-        bone.bm_child_empty = found_relations[child][1]
+    for child_tup in found_relations.keys():
+        child = child_tup[0]
+        bone = bpy.data.objects[found_relations[child_tup][0]].data.bones[child]
+        relation = next((rel for rel in bone.bm_relations if rel.bm_relation_slot == child_tup[1]), None)
+        if not relation:
+            relation = bone.bm_relations.add()
+            relation.bm_relation_slot = child_tup[1]
+
+        relation.bm_external_armature = found_relations[child_tup][3]
+        relation.bm_external_parent = found_relations[child_tup][4]
+        relation.bm_parent_empty = found_relations[child_tup][2]
+        relation.bm_child_empty = found_relations[child_tup][1]
 
     #TODO: try to see if a object is a child
 

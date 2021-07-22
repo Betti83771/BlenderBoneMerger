@@ -16,6 +16,7 @@ class BoneMergerPanel(bpy.types.Panel):
         row = layout.row()
         row.prop(context.window_manager, 'bm_target_parent', text='Parent', icon='ARMATURE_DATA')
         if context.window_manager.bm_target_parent:
+            #TODO: error if bm_target_parent is empty
             row = layout.row()
             row.prop_search(context.window_manager, "bm_subtarget_parent", context.window_manager.bm_target_parent.data, "bones", text="")
         row = layout.row()
@@ -24,6 +25,8 @@ class BoneMergerPanel(bpy.types.Panel):
             row = layout.row()
             row.prop_search(context.window_manager, "bm_subtarget_child", context.window_manager.bm_target_child.data, "bones", text="")
             
+        row = layout.row()
+        row.prop(context.window_manager, 'bm_relation_slot_ui')
         row = layout.row()
         row.prop(context.window_manager, 'bm_use_snap')
         row = layout.row()
@@ -43,9 +46,11 @@ class BMParentingLink(bpy.types.PropertyGroup):
                                                 description="")
     empty_child: bpy.props.StringProperty(name='Empty child', 
                                                 description="")
+    relation_slot: bpy.props.IntProperty()
 
     parenting_remove: bpy.props.BoolProperty(default=False, description="Remove")
     parenting_update: bpy.props.BoolProperty(default=False, description="Update")
+
 
 
 class BMManageParenting(bpy.types.Operator):
@@ -66,19 +71,20 @@ class BMManageParenting(bpy.types.Operator):
                 new.bone_parent = bm_chk_dict[link][5]
 
                 if bm_chk_dict[link][0] == 'BONE':
-                    new.bone_child = link 
+                    new.bone_child = link[0]
 
                 new.arm_parent = bm_chk_dict[link][4]
 
                 if bm_chk_dict[link][0] == 'BONE':
                     new.arm_child = bm_chk_dict[link][1]
                 else:
-                    new.arm_child = link
+                    new.arm_child = link[0]
 
                 new.empty_parent = bm_chk_dict[link][2]
 
                 new.empty_child = bm_chk_dict[link][3]
 
+                new.relation_slot = link[1]
 
 
     def draw(self, context):
@@ -109,6 +115,8 @@ class BMManageParenting(bpy.types.Operator):
             row5.row().label(text="Parent:")
             row6 = col.row()
             row6.row().label(text="Parent Bone:")
+            row7 = col.row()
+            row7.row().label(text="Relation slot:")
         
             col = split.column()
             col.row().label(text=link.bone_child)
@@ -117,6 +125,7 @@ class BMManageParenting(bpy.types.Operator):
             col.row().label(text=link.empty_parent)
             col.row().label(text=link.arm_parent)
             col.row().label(text=link.bone_parent)
+            col.row().label(text=str(link.relation_slot))
 
             col = out_split.column()
             row = col.row()
@@ -172,46 +181,3 @@ class BMManageParenting(bpy.types.Operator):
         wm = context.window_manager
         return wm.invoke_props_dialog(self, width=width)
 
-
-
-#TODO: add descriptions
-def properties_register():
-    bpy.types.WindowManager.bm_target_parent = bpy.props.PointerProperty(type=bpy.types.Object,
-                                                name='Starting armature', 
-                                                description="Starting armature")
-    bpy.types.WindowManager.bm_subtarget_parent = bpy.props.StringProperty(default="",
-                                                name='Starting bone', 
-                                                description="Starting bone")
-    bpy.types.WindowManager.bm_target_child = bpy.props.PointerProperty(type=bpy.types.Object,
-                                                name='Target armature', 
-                                                description="Target armature")
-    bpy.types.WindowManager.bm_subtarget_child = bpy.props.StringProperty(default="",
-                                                name='Target bone', 
-                                                description="Target bone")
-    bpy.types.WindowManager.intlist = bpy.props.IntProperty(default=0,
-                                                name='intlist', 
-                                                description="intprop for list")     
-    bpy.types.WindowManager.bm_use_snap = bpy.props.BoolProperty(default=False,
-                                                name='Snap empty on parent', 
-                                                description="If checked, the child bone's empty gets put in the parent's position.")   
-    bpy.types.Bone.bm_external_parent = bpy.props.StringProperty(default="",
-                                                name='External parent', 
-                                                description="External parent")
-    bpy.types.Bone.bm_external_armature = bpy.props.StringProperty(default="",
-                                                name='External armature', 
-                                                description="External armature")       
-    bpy.types.Bone.bm_child_empty = bpy.props.StringProperty(default="",
-                                                name='Child empty', 
-                                                description="Child empty")     
-    bpy.types.Bone.bm_parent_empty = bpy.props.StringProperty(default="",
-                                                name='Parent empty', 
-                                                description="Parent empty")                                 
-
-def properties_unregister():
-    del bpy.types.WindowManager.bm_target_parent
-    del bpy.types.WindowManager.bm_subtarget_parent
-    del bpy.types.WindowManager.bm_target_child
-    del bpy.types.WindowManager.bm_subtarget_child
-    del bpy.types.WindowManager.intlist
-    del bpy.types.PoseBone.bm_external_armature
-    del bpy.types.PoseBone.bm_external_parent
