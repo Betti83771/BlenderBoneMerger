@@ -243,10 +243,10 @@ def b_m_auto_recognize_parenting():
                         empty_target_consts.append(const)
                 except AttributeError:
                     continue
-            
+            rel_i = 0
             for const in empty_target_consts:
-                rel_i = 0
                 if const.target.parent in empties:
+                    print(const)
                     for parentconst in  const.target.parent.constraints:
                         try:
                             if parentconst.target:
@@ -259,6 +259,7 @@ def b_m_auto_recognize_parenting():
                             continue
     
     #set the found relations
+    print("found_relations", found_relations)
     
     for child_tup in found_relations.keys():
         child = child_tup[0]
