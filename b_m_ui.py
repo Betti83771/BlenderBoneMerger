@@ -192,7 +192,7 @@ class BMManageParenting(bpy.types.Operator):
 
 class BMManualParentingPopup(bpy.types.Operator):
     bl_idname = "b_m.manual_parenting_popup"
-    bl_label = "Manual register new parenting"
+    bl_label = "Manually register new relation"
     
     empty_parent: bpy.props.StringProperty(name="Empty parent name")
     empty_child: bpy.props.StringProperty(name="Empty child name")
