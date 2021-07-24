@@ -196,17 +196,20 @@ def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent_str, arm_child_st
             bm_child_empty = arm_child['bm_child_empty_' + name_suffix]
         else:
             bm_child_empty = ""
-
-    bpy.data.objects.remove(bpy.data.objects[bm_parent_empty])
-    bpy.data.objects.remove(bpy.data.objects[bm_child_empty])
+    if bm_parent_empty in bpy.data.objects.keys():
+        bpy.data.objects.remove(bpy.data.objects[bm_parent_empty])
+    if bm_child_empty in bpy.data.objects.keys():
+        bpy.data.objects.remove(bpy.data.objects[bm_child_empty])
     
     
     if bone_child != "":
         const2 = next((const for const in arm_child.pose.bones[bone_child].constraints if const.name == 'bm_const2_' + name_suffix), None)
-        arm_child.pose.bones[bone_child].constraints.remove(const2)
+        if const2:
+            arm_child.pose.bones[bone_child].constraints.remove(const2)
     else:
         const2 = next((const for const in arm_child.constraints if const.name == 'bm_const2_' + name_suffix), None)
-        arm_child.constraints.remove(const2)
+        if const2:
+            arm_child.constraints.remove(const2)
 
     if bone_child != "":
         index = arm_child.data.bones[bone_child].bm_relations.find(relation.name)
