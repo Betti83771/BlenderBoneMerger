@@ -44,11 +44,17 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i):
             bm_child_empty = ""
         
     #check for empties or create the new ones
-    if bm_parent_empty != "":
+    if bm_parent_empty != "" and bm_parent_empty in bpy.data.objects.keys():
         empty1 = bpy.data.objects[bm_parent_empty]
+        
     else:
+        if bone_child != "":
+            size = arm_child.data.bones[bone_child].length * 2
+        else:
+            size = arm_child.dimensions.z * 1.5
         empty1 = bpy.data.objects.new(arm_parent.name + "_" + bone_parent, None)
         empty1.empty_display_type = 'CUBE'
+        empty1.empty_display_size = size
         bpy.context.scene.collection.objects.link(empty1)
         if bone_parent != "":
             matrix_1 = arm_parent.pose.bones[bone_parent].matrix.copy()
@@ -56,7 +62,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i):
         else:
             empty1.matrix_world = arm_parent.matrix_world
 
-    if bm_child_empty != "":
+    if bm_child_empty != "" and bm_child_empty in bpy.data.objects.keys():
         empty2 = bpy.data.objects[bm_child_empty]
     else:
         empty2 = bpy.data.objects.new(arm_child.name + "_" + bone_child, None )
@@ -277,3 +283,66 @@ def b_m_auto_recognize_parenting():
     #TODO: try to see if a object is a child
 
     return found_relations
+
+def b_m_manual_register_relations(bone_parent, bone_child,  arm_parent, arm_child, empty_parent_str, empty_child_str, rel_i):
+    if empty_child_str not in bpy.data.objects.keys():
+        return 'NO_CHILD_EMPTY'
+    
+    if empty_parent_str not in bpy.data.objects.keys():
+        return 'NO_PARENT_EMPTY'
+    
+    name_suffix = (str(rel_i).zfill(2))
+
+    if bone_child != "":
+        bone = bpy.data.objects[arm_child].data.bones[bone_child]
+        relation = next((rel for rel in bone.bm_relations if rel.bm_relation_slot == rel_i), None)
+        if not relation:
+            relation = bone.bm_relations.add()
+            relation.bm_relation_slot = rel_i
+        else:
+            return 'REL_SLOT_FULL'
+
+    # find constraints
+    const1_found = False
+    const2_found = False
+    if bone_child != "":
+        constraints = arm_child.pose.bones[bone_child].constraints
+    else:
+        constraints = arm_child.constraints
+    for const in constraints:
+        try:
+            if const.target == bpy.data.objects[empty_child_str]:
+                const.name = 'bm_const2_{0}'.format(name_suffix)
+                const1_found = True
+        except AttributeError:
+            continue
+    
+    for const in bpy.data.objects[empty_parent_str].constraints:
+        try:
+            if const.target == arm_parent:
+                const.name = 'bm_const1_{0}'.format(name_suffix)
+                const2_found = True
+        except AttributeError:
+            continue
+
+    if not const1_found:
+        return 'NO_CHILD_CONST'
+    
+    if not const2_found:
+        return 'NO_PARENT_CONST'
+    if bone_child != "":
+        relation.bm_external_parent = bone_parent
+        relation.bm_external_armature = arm_parent.name
+        relation.bm_child_empty = empty_child_str
+        relation.bm_parent_empty = empty_parent_str
+    else:
+        arm_child["bm_external_armature_" + name_suffix] = arm_parent.name
+        arm_child["bm_child_empty_" + name_suffix] = empty_child_str
+        arm_child["bm_parent_empty_" + name_suffix] = empty_parent_str
+        if bone_parent != "":
+            arm_child["bm_external_parent_" + name_suffix] = bone_parent
+        else:
+            if 'bm_external_parent' in arm_child.keys():
+                del arm_child["bm_external_parent_" + name_suffix]
+
+    return 'SUCCESS'

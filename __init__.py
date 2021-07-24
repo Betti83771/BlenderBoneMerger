@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Bone Merger Package",
     "author": "Betti",
-    "version": (1, 2),
+    "version": (2, 1),
     "blender": (2, 80, 0),
     "location": "View3D > Bone Merger",
     "description": """Creates a chain of parenting between two bones, placing two intermediary empties""",
@@ -48,15 +48,11 @@ from .bm_properties import *
 def register():
     properties_register()
     bpy.utils.register_class(BoneMergerOperator)
-    bpy.utils.register_class(BoneMergerPanel)
-    bpy.utils.register_class(BMParentingLink)
-    bpy.utils.register_class(BMManageParenting)
+    bm_ui_register()
 
 
 def unregister():
-    bpy.utils.unregister_class(BMParentingLink)
-    bpy.utils.unregister_class(BMManageParenting)
-    bpy.utils.unregister_class(BoneMergerPanel)
+    bm_ui_unregister()
     bpy.utils.unregister_class(BoneMergerOperator)
     properties_unregister()
 

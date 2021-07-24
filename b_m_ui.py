@@ -1,5 +1,7 @@
 import bpy
-from .bone_merger import b_m_checker, b_m_func, b_m_parent_rel_remove, b_m_auto_recognize_parenting
+from .bone_merger import b_m_checker, b_m_func, b_m_parent_rel_remove, b_m_auto_recognize_parenting, b_m_manual_register_relations
+
+
 
 class BoneMergerPanel(bpy.types.Panel):
     """Creates a Panel that houses the buttons  """
@@ -16,14 +18,17 @@ class BoneMergerPanel(bpy.types.Panel):
         row = layout.row()
         row.prop(context.window_manager, 'bm_target_parent', text='Parent', icon='ARMATURE_DATA')
         if context.window_manager.bm_target_parent:
-            #TODO: error if bm_target_parent is empty
-            row = layout.row()
-            row.prop_search(context.window_manager, "bm_subtarget_parent", context.window_manager.bm_target_parent.data, "bones", text="")
+            if context.window_manager.bm_target_parent.data:
+                if context.window_manager.bm_target_parent.data in bpy.data.armatures.values():
+                    row = layout.row()
+                    row.prop_search(context.window_manager, "bm_subtarget_parent", context.window_manager.bm_target_parent.data, "bones", text="")
         row = layout.row()
         row.prop(context.window_manager, 'bm_target_child', text='Child', icon='ARMATURE_DATA')
         if context.window_manager.bm_target_child:
-            row = layout.row()
-            row.prop_search(context.window_manager, "bm_subtarget_child", context.window_manager.bm_target_child.data, "bones", text="")
+            if context.window_manager.bm_target_child.data:
+                if context.window_manager.bm_target_child.data in bpy.data.armatures.values():
+                    row = layout.row()
+                    row.prop_search(context.window_manager, "bm_subtarget_child", context.window_manager.bm_target_child.data, "bones", text="")
             
         row = layout.row()
         row.prop(context.window_manager, 'bm_relation_slot_ui')
@@ -33,7 +38,7 @@ class BoneMergerPanel(bpy.types.Panel):
         row.operator("b_m.parent_constraint")
         row = layout.row()
         row.operator("wm.bm_manage_parenting")
-
+        
 class BMParentingLink(bpy.types.PropertyGroup):
     bone_parent: bpy.props.StringProperty(name='Parent bone', 
                                           description="Starting bone")
@@ -50,7 +55,6 @@ class BMParentingLink(bpy.types.PropertyGroup):
 
     parenting_remove: bpy.props.BoolProperty(default=False, description="Remove")
     parenting_update: bpy.props.BoolProperty(default=False, description="Update")
-
 
 
 class BMManageParenting(bpy.types.Operator):
@@ -134,8 +138,11 @@ class BMManageParenting(bpy.types.Operator):
             row.prop(link, 'parenting_update',  text="Update", toggle=True)
 
         
+        
         row = layout.row()
-        row.prop(self, "register_new_link", text="Register new parenting", icon='ADD')
+        layout.operator_context = 'INVOKE_DEFAULT'
+       # row.prop(self, "register_new_link", text="Register new parenting", icon='ADD')
+        row.operator("b_m.manual_parenting_popup", icon='ADD')
         row = layout.row()
         row.prop(self, "try_auto_link", text="Try auto recognize parenting", icon='ADD')
 
@@ -143,8 +150,10 @@ class BMManageParenting(bpy.types.Operator):
         changed = False
         if self.register_new_link:
             self.register_new_link = False
-            #call operator /func /whatever
+            context.window_manager.invoke_popup()
+            self.links_populate()
             changed = True
+
 
         if self.try_auto_link:
             self.try_auto_link = False
@@ -166,7 +175,7 @@ class BMManageParenting(bpy.types.Operator):
 
             if link.parenting_update:
                link.parenting_update = False
-               b_m_func(link.bone_parent, link.bone_child,  link.arm_parent, link.arm_child)
+               b_m_func(link.bone_parent, link.bone_child,  bpy.data.objects[link.arm_parent], bpy.data.objects[link.arm_child], link.relation_slot)
                changed = True 
         return changed
 
@@ -181,3 +190,100 @@ class BMManageParenting(bpy.types.Operator):
         wm = context.window_manager
         return wm.invoke_props_dialog(self, width=width)
 
+class BMManualParentingPopup(bpy.types.Operator):
+    bl_idname = "b_m.manual_parenting_popup"
+    bl_label = "Manual register new parenting"
+    
+    empty_parent: bpy.props.StringProperty(name="Empty parent name")
+    empty_child: bpy.props.StringProperty(name="Empty child name")
+
+    def draw(self, context):
+        layout = self.layout
+        split = layout.split(factor=0.5)
+        col1 = split.column()
+        col1.row().label(text='Parent')
+        if context.window_manager.bm_target_parent:
+            if context.window_manager.bm_target_parent.data:
+                if context.window_manager.bm_target_parent.data in bpy.data.armatures.values():
+                    row = col1.row()
+                    col1.row().label(text= "Bone")
+        
+        col1.row().label(text='Child')
+        if context.window_manager.bm_target_child:
+            if context.window_manager.bm_target_child.data:
+                if context.window_manager.bm_target_child.data in bpy.data.armatures.values():
+                    row = col1.row()
+                    col1.row().label(text= "Bone")
+        
+        col1.row().label(text='Empty parent name')
+        col1.row().label(text='Empty child name')
+        col1.row().label(text='')
+
+
+        col2 = split.column()
+        row = col2.row()
+        row.prop(context.window_manager, 'bm_target_parent',  icon='ARMATURE_DATA', text="")
+        if context.window_manager.bm_target_parent:
+            if context.window_manager.bm_target_parent.data:
+                if context.window_manager.bm_target_parent.data in bpy.data.armatures.values():
+                    row = col2.row()
+                    row.prop_search(context.window_manager, "bm_subtarget_parent", context.window_manager.bm_target_parent.data, "bones", text="")
+        row = col2.row()
+        row.prop(context.window_manager, 'bm_target_child', icon='ARMATURE_DATA', text="")
+        if context.window_manager.bm_target_child:
+            if context.window_manager.bm_target_child.data:
+                if context.window_manager.bm_target_child.data in bpy.data.armatures.values():
+                    row = col2.row()
+                    row.prop_search(context.window_manager, "bm_subtarget_child", context.window_manager.bm_target_child.data, "bones", text="")
+        row = col2.row()
+        row.prop(self, 'empty_parent', text="")
+
+        row = col2.row()
+        row.prop(self, 'empty_child', text="")
+
+        row = layout.row()
+        row.prop(context.window_manager, 'bm_relation_slot_ui')
+
+    def check(self, context):
+        return True
+    
+    def execute(self, context):
+        report = b_m_manual_register_relations(context.window_manager.bm_subtarget_parent, context.window_manager.bm_subtarget_child, context.window_manager.bm_target_parent, context.window_manager.bm_target_child, self.empty_parent, self.empty_child, context.window_manager.bm_relation_slot_ui)
+        if report == 'NO_CHILD_EMPTY':
+            self.report(type={'ERROR'}, message="Can't find this child empty.")
+        if report == 'NO_PARENT_EMPTY':
+            self.report(type={'ERROR'}, message="Can't find this parent empty.")
+        if report == 'REL_SLOT_FULL':
+            self.report(type={'ERROR'}, message="This relation slot is already occupied. Please select another slot or update the relation.")
+        if report == 'NO_CHILD_CONST':
+            self.report(type={'ERROR'}, message="Can't find the constraint on the child.")
+        if report == 'NO_PARENT_CONST':
+            self.report(type={'ERROR'}, message="Can't find the constraint on the parent empty.")
+        if report == 'SUCCESS':
+            self.report(type={'INFO'}, message="Success!")
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        width = 300
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self, width=width)
+
+
+        
+
+
+
+def bm_ui_register():
+    bpy.utils.register_class(BoneMergerPanel)
+    bpy.utils.register_class(BMParentingLink)
+    bpy.utils.register_class(BMManageParenting)
+    bpy.utils.register_class(BMManualParentingPopup)
+
+def bm_ui_unregister():
+    bpy.utils.unregister_class(BMManualParentingPopup)
+    bpy.utils.unregister_class(BMManageParenting)
+    bpy.utils.unregister_class(BMParentingLink)
+    bpy.utils.unregister_class(BoneMergerPanel)
+    
+   
+    
