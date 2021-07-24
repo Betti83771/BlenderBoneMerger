@@ -1,5 +1,5 @@
 import bpy
-from mathutils import Matrix
+from mathutils import Vector
 
 class BoneMergerOperator(bpy.types.Operator):
     """Creates a parenting chain as follows: 
@@ -48,10 +48,17 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i):
         empty1 = bpy.data.objects[bm_parent_empty]
         
     else:
-        if bone_child != "":
-            size = arm_child.data.bones[bone_child].length * 2
+       
+        if bone_parent != "":
+            size = arm_parent.data.bones[bone_parent].length * 1.2
         else:
-            size = arm_child.dimensions.z * 1.5
+            if arm_parent.dimensions.z == 0.0:
+                size = 0.5
+                
+            else:
+                size = arm_parent.dimensions.z * 0.85
+
+
         empty1 = bpy.data.objects.new(arm_parent.name + "_" + bone_parent, None)
         empty1.empty_display_type = 'CUBE'
         empty1.empty_display_size = size
@@ -65,8 +72,17 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i):
     if bm_child_empty != "" and bm_child_empty in bpy.data.objects.keys():
         empty2 = bpy.data.objects[bm_child_empty]
     else:
+        if bone_child != "":
+            size = arm_child.data.bones[bone_child].length * 1.2
+        else:
+            if arm_child.dimensions.z == 0.0:
+                size = 0.5
+                
+            else:
+                size = arm_child.dimensions.z * 0.85
         empty2 = bpy.data.objects.new(arm_child.name + "_" + bone_child, None )
         empty2.empty_display_type = 'SPHERE'
+        empty2.empty_display_size = size
         bpy.context.scene.collection.objects.link(empty2)
         if bone_child != "":
             matrix_2 = arm_child.pose.bones[bone_child].matrix.copy()
