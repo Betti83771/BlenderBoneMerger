@@ -40,7 +40,13 @@ def properties_register():
                                                 min=0,
                                                 max=10,
                                                 name='Relation slot', 
-                                                description="Slot where to create the relation, to support multiple switchable relations via constraint influence")     
+                                                description="Choose which relation to overwrite. You can check out the slot number in the 'Manage relations' popup. The slot is recorded on the child; the child has slots, not the parent ")     
+    bpy.types.WindowManager.bm_relation_mode_ui =  bpy.props.EnumProperty(name="Bone Merger Make Relation Mode",
+                                                    description="""'Parent and constraint' mode. In 'overwrite' mode the relation will be updated as defined by the specified parent and child. 
+                                                    In 'new' mode, a new relation will be created, but the child will keep the previous relations and the user would switch between parent.  Current mode""",
+                                                    #update=update_mode,
+                                                    items=( ('new', 'new', ''), ('overwrite', 'overwrite', '')),
+                                                    default='new' )
     bpy.types.WindowManager.bm_use_snap = bpy.props.BoolProperty(default=False,
                                                 name='Snap empty on parent', 
                                                 description="If checked, the child bone's empty gets put in the parent's position.")   
@@ -53,6 +59,7 @@ def properties_unregister():
     del bpy.types.WindowManager.bm_subtarget_parent
     del bpy.types.WindowManager.bm_target_child
     del bpy.types.WindowManager.bm_subtarget_child
+    del bpy.types.WindowManager.bm_relation_mode_ui
     del bpy.types.WindowManager.bm_relation_slot_ui
-    del bpy.types.PoseBone.bm_relations
+    del bpy.types.Bone.bm_relations
     bpy.utils.unregister_class(BMRelations)

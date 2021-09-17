@@ -15,7 +15,12 @@ class BoneMergerOperator(bpy.types.Operator):
         return context.window_manager.bm_target_parent and context.window_manager.bm_target_child
 
     def execute(self, context):
-        b_m_func(context.window_manager.bm_subtarget_parent, context.window_manager.bm_subtarget_child, context.window_manager.bm_target_parent, context.window_manager.bm_target_child, context.window_manager.bm_relation_slot_ui)
+        subtarget = context.window_manager.bm_target_child.data.bones[context.window_manager.bm_subtarget_child]
+        if context.window_manager.bm_relation_mode_ui == "overwrite":
+            relation_slot = context.window_manager.bm_relation_slot_ui
+        else:
+            relation_slot = len(subtarget.bm_relations)
+        b_m_func(context.window_manager.bm_subtarget_parent, context.window_manager.bm_subtarget_child, context.window_manager.bm_target_parent, context.window_manager.bm_target_child, relation_slot)
         return {'FINISHED'}
 
 def snap_objs(to_snap, target):

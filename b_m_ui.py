@@ -31,7 +31,10 @@ class BoneMergerPanel(bpy.types.Panel):
                     row.prop_search(context.window_manager, "bm_subtarget_child", context.window_manager.bm_target_child.data, "bones", text="")
             
         row = layout.row()
-        row.prop(context.window_manager, 'bm_relation_slot_ui')
+        row.prop(context.window_manager, 'bm_relation_mode_ui', expand=True)
+        if context.window_manager.bm_relation_mode_ui == "overwrite":
+            row = layout.row()
+            row.prop(context.window_manager, 'bm_relation_slot_ui')
         row = layout.row()
         row.prop(context.window_manager, 'bm_use_snap')
         row = layout.row()
