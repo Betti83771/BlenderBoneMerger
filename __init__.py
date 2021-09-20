@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Bone Merger Package",
     "author": "Betti",
-    "version": (2, 1),
+    "version": (2, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Bone Merger",
     "description": """Creates a chain of parenting between two bones, placing two intermediary empties""",

@@ -126,12 +126,12 @@ class BMManageParenting(bpy.types.Operator):
             row7.row().label(text="Relation slot:")
         
             col = split.column()
-            col.row().label(text=link.bone_child)
-            col.row().label(text=link.arm_child)
-            col.row().label(text=link.empty_child)
-            col.row().label(text=link.empty_parent)
-            col.row().label(text=link.arm_parent)
-            col.row().label(text=link.bone_parent)
+            col.row().prop(link , "bone_child", text="")
+            col.row().prop(link, "arm_child", text="")
+            col.row().prop(link, "empty_child", text="")
+            col.row().prop(link, "empty_parent", text="")
+            col.row().prop(link, "arm_parent", text="")
+            col.row().prop(link, "bone_parent", text="")
             col.row().label(text=str(link.relation_slot))
 
             col = out_split.column()
@@ -180,6 +180,7 @@ class BMManageParenting(bpy.types.Operator):
                link.parenting_update = False
                b_m_func(link.bone_parent, link.bone_child,  bpy.data.objects[link.arm_parent], bpy.data.objects[link.arm_child], link.relation_slot)
                changed = True 
+               #TODO: if child/parent change, do you want to change the empty's name?
         return changed
 
     def execute(self, context):
