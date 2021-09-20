@@ -15,11 +15,23 @@ class BoneMergerOperator(bpy.types.Operator):
         return context.window_manager.bm_target_parent and context.window_manager.bm_target_child
 
     def execute(self, context):
-        subtarget = context.window_manager.bm_target_child.data.bones[context.window_manager.bm_subtarget_child]
-        if context.window_manager.bm_relation_mode_ui == "overwrite":
-            relation_slot = context.window_manager.bm_relation_slot_ui
+        if context.window_manager.bm_target_child.data in bpy.data.armatures.values():
+            subtarget = context.window_manager.bm_target_child.data.bones[context.window_manager.bm_subtarget_child]
+            if context.window_manager.bm_relation_mode_ui == "overwrite":
+                relation_slot = context.window_manager.bm_relation_slot_ui
+            else:
+                relation_slot = len(subtarget.bm_relations)
         else:
-            relation_slot = len(subtarget.bm_relations)
+            subtarget = context.window_manager.bm_target_child
+            if context.window_manager.bm_relation_mode_ui == "overwrite":
+                relation_slot = context.window_manager.bm_relation_slot_ui
+            else:
+                props = [prop for prop in subtarget.keys() if prop.startswith("bm_external_parent_")]
+                if props != []:
+                    relation_slot = len(props)
+                else:
+                    relation_slot = 0
+
         b_m_func(context.window_manager.bm_subtarget_parent, context.window_manager.bm_subtarget_child, context.window_manager.bm_target_parent, context.window_manager.bm_target_child, relation_slot)
         return {'FINISHED'}
 
