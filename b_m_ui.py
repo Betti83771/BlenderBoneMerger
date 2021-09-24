@@ -40,7 +40,7 @@ class BoneMergerPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("b_m.parent_constraint")
         row = layout.row()
-        row.operator("wm.bm_manage_parenting")
+        row.operator("wm.bm_manage_parenting", icon="COLLAPSEMENU")
         
 class BMParentingLink(bpy.types.PropertyGroup):
     bone_parent: bpy.props.StringProperty(name='Parent bone', 
