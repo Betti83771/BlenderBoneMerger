@@ -1,5 +1,7 @@
 import bpy
+from bpy.types import Constraint
 
+constr_influence_ui_script = """"""
 class ParentSwitchPanel(bpy.types.Panel):
     """Creates a Panel that houses the constraint influence properties  """
     bl_label = "Bone Merger: Parent Switch"
@@ -17,6 +19,8 @@ class ParentSwitchPanel(bpy.types.Panel):
         use_showall = context.window_manager.bm_parsw_use_showall
 
         layout = self.layout
+        row = layout.row()
+        row.label(text="Influences:")
 
         posebones = []
         row = layout.row()
@@ -34,17 +38,21 @@ class ParentSwitchPanel(bpy.types.Panel):
             posebones.extend(context.object.pose.bones.values())
 
         for posebone in posebones:
-            constraints = [const for const in posebone.constraints if const.name.startswith("bm_const2_")]
+            constraints = [const for const in posebone.constraints if const.name.startswith("bm_const2_")] 
 
             for constraint in constraints:
+                target = constraint.target.name.split("_")[-1]
                 row = col1.row()
                 row.label(text=posebone.name)
 
                 row = col2.row()
-                row.prop(constraint, 'influence')
+                row.prop(constraint, 'influence', text =target)
 
 def constr_influence_panel_register():
-    bpy.types.WindowManager.bm_parsw_use_showall = bpy.props.BoolProperty(name = "Show all", default=True)
+    bpy.types.WindowManager.bm_parsw_use_showall = bpy.props.BoolProperty(name = "Show all", 
+                                                    default=True,
+                                                    description="""If off, only shows the influences of the 
+                                                    active bone.""")
     bpy.utils.register_class(ParentSwitchPanel)
  
 def constr_influence_panel_unregister():
