@@ -42,9 +42,7 @@ class ParentSwitchPanel(bpy.types.Panel):
 
             for constraint in constraints:
                 bm_rels = context.object.data.bones[posebone.name].bm_relations
-                target = next((rel.bm_external_armature for rel in bm_rels if rel.bm_child_empty == constraint.target.name), None)
-                if not target:
-                    target = "Unknown parent"
+                target = next((rel.bm_external_armature for rel in bm_rels if rel.bm_child_empty == constraint.target.name), "Unknown parent")
                 row = col1.row()
                 row.label(text=posebone.name)
 
