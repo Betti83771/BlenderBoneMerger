@@ -1,9 +1,9 @@
 import bpy
+constr_influence_ui_script = """
+import bpy
 from bpy.types import Constraint
-
-constr_influence_ui_script = """"""
 class ParentSwitchPanel(bpy.types.Panel):
-    """Creates a Panel that houses the constraint influence properties  """
+    \"\"\"Creates a Panel that houses the constraint influence properties  \"\"\"
     bl_label = "Bone Merger: Parent Switch"
     bl_idname = "OBJECT_PT_BMParentSwitchPanel"
     bl_space_type = 'VIEW_3D'
@@ -41,7 +41,10 @@ class ParentSwitchPanel(bpy.types.Panel):
             constraints = [const for const in posebone.constraints if const.name.startswith("bm_const2_")] 
 
             for constraint in constraints:
-                target = constraint.target.name.split("_")[-1]
+                bm_rels = context.object.data.bones[posebone.name].bm_relations
+                target = next((rel.bm_external_armature for rel in bm_rels if rel.bm_child_empty == constraint.target.name), None)
+                if not target:
+                    target = "Unknown parent"
                 row = col1.row()
                 row.label(text=posebone.name)
 
@@ -51,12 +54,18 @@ class ParentSwitchPanel(bpy.types.Panel):
 def constr_influence_panel_register():
     bpy.types.WindowManager.bm_parsw_use_showall = bpy.props.BoolProperty(name = "Show all", 
                                                     default=True,
-                                                    description="""If off, only shows the influences of the 
-                                                    active bone.""")
+                                                    description=\"\"\"If off, only shows the influences of the 
+                                                    active bone.\"\"\")
     bpy.utils.register_class(ParentSwitchPanel)
  
 def constr_influence_panel_unregister():
     bpy.utils.unregister_class(ParentSwitchPanel)
 
 if __name__ == '__main__':
-    constr_influence_panel_register()
+    constr_influence_panel_register()"""
+
+def script_create_and_register():
+    script = bpy.data.texts.new("constraint_influence_ui.py")
+    script.write(constr_influence_ui_script)
+    script.use_module = True
+

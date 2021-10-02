@@ -1,5 +1,6 @@
 import bpy
 from mathutils import Vector
+from .constr_influence_ui import *
 
 class BoneMergerOperator(bpy.types.Operator):
     """Creates a parenting chain as follows: 
@@ -33,6 +34,7 @@ class BoneMergerOperator(bpy.types.Operator):
                     relation_slot = 0
 
         b_m_func(context.window_manager.bm_subtarget_parent, context.window_manager.bm_subtarget_child, context.window_manager.bm_target_parent, context.window_manager.bm_target_child, relation_slot)
+
         return {'FINISHED'}
 
 def snap_objs(to_snap, target):
@@ -156,7 +158,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i):
             if 'bm_external_parent' in arm_child.keys():
                 del arm_child["bm_external_parent_" + name_suffix]
             
-
+    run_constr_infl_ui_script()
     return
 
 def b_m_checker():
@@ -382,3 +384,23 @@ def b_m_manual_register_relations(bone_parent, bone_child,  arm_parent, arm_chil
                 del arm_child["bm_external_parent_" + name_suffix]
 
     return 'SUCCESS'
+
+
+def run_constr_infl_ui_script():
+    if "constraint_influence_ui.py" in bpy.data.texts:
+        if  bpy.data.texts["constraint_influence_ui.py"].use_module:
+            return
+    script_create_and_register()
+    script = bpy.data.texts["constraint_influence_ui.py"]
+
+    for screen in bpy.data.screens:
+        for area in screen.areas:
+            if area.type == 'TEXT_EDITOR':
+                area.spaces[0].text = script 
+
+                context = bpy.context.copy()
+                context['edit_text'] = script 
+                context['area'] = area
+                context['region'] = area.regions[-1]
+                bpy.ops.text.run_script(context)
+                break
