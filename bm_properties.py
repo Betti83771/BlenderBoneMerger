@@ -55,7 +55,8 @@ def properties_register():
                                                 description="If checked, sets the newly created emties on hidden when creating a new relation.")   
     bpy.types.Bone.bm_relations = bpy.props.CollectionProperty(type=BMRelations,
                                                               name="Bone Merger relations",
-                                                              description="Relations this bone is a child of in the 'Bone Merger' add-on")                      
+                                                              description="Relations this bone is a child of in the 'Bone Merger' add-on",
+                                                            override={'LIBRARY_OVERRIDABLE', 'USE_INSERTION'})                      
 
 def properties_unregister():
     del bpy.types.WindowManager.bm_target_parent
