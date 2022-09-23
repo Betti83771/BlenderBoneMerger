@@ -50,6 +50,9 @@ def properties_register():
     bpy.types.WindowManager.bm_use_snap = bpy.props.BoolProperty(default=False,
                                                 name='Snap empty on parent', 
                                                 description="If checked, the child bone's empty gets put in the parent's position.")   
+    bpy.types.WindowManager.bm_hide_empties = bpy.props.BoolProperty(default=True,
+                                                name='Hide new empties', 
+                                                description="If checked, sets the newly created emties on hidden when creating a new relation.")   
     bpy.types.Bone.bm_relations = bpy.props.CollectionProperty(type=BMRelations,
                                                               name="Bone Merger relations",
                                                               description="Relations this bone is a child of in the 'Bone Merger' add-on")                      

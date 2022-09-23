@@ -5,7 +5,7 @@ from .bone_merger import b_m_checker, b_m_func, b_m_parent_rel_remove, b_m_auto_
 
 class BoneMergerPanel(bpy.types.Panel):
     """Creates a Panel that houses the buttons  """
-    bl_label = "Bone Merger"
+    bl_label = "Bone Merger v2.5"
     bl_idname = "OBJECT_PT_BMPanel"
     bl_space_type = 'VIEW_3D'
     bl_category = "Bone Merger"
@@ -41,6 +41,8 @@ class BoneMergerPanel(bpy.types.Panel):
                 row.label(text="Overwriting parent: " + parent)
         row = layout.row()
         row.prop(context.window_manager, 'bm_use_snap')
+        row = layout.row()
+        row.prop(context.window_manager, 'bm_hide_empties')
         row = layout.row()
         row.operator("b_m.parent_constraint")
         row = layout.row()

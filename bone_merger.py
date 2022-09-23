@@ -33,14 +33,20 @@ class BoneMergerOperator(bpy.types.Operator):
                 else:
                     relation_slot = 0
 
-        b_m_func(context.window_manager.bm_subtarget_parent, context.window_manager.bm_subtarget_child, context.window_manager.bm_target_parent, context.window_manager.bm_target_child, relation_slot)
+        b_m_func(context.window_manager.bm_subtarget_parent, 
+            context.window_manager.bm_subtarget_child, 
+            context.window_manager.bm_target_parent, 
+            context.window_manager.bm_target_child, 
+            relation_slot,
+            use_snap=context.window_manager.bm_use_snap, 
+            hide_empties=context.window_manager.bm_hide_empties)
 
         return {'FINISHED'}
 
 def snap_objs(to_snap, target):
     to_snap.matrix_world =  target.matrix_world
 
-def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i):
+def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=False, hide_empties=True):
     if bone_child != "":
         relation = next((rel for rel in arm_child.data.bones[bone_child].bm_relations if rel.bm_relation_slot == rel_i), None)
    
@@ -110,8 +116,13 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i):
             empty2.matrix_world = arm_child.matrix_world
 
     #snap the second empty on the first
-    if bpy.context.window_manager.bm_use_snap:
+    if use_snap:
         snap_objs(empty2, empty1) 
+
+    #hide the empties
+    if hide_empties:
+        empty1.hide_viewport = True
+        empty2.hide_viewport = True
 
     #make the constraints
     const1 = next((const for const in empty1.constraints if const.name == 'bm_const1_{0}'.format(str(rel_i).zfill(2))), None)
