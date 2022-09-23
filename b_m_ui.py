@@ -46,7 +46,7 @@ class BoneMergerPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("b_m.parent_constraint")
         row = layout.row()
-        row.operator("wm.bm_manage_parenting", icon="COLLAPSEMENU")
+        row.operator("wm.bm_manage_relations", icon="COLLAPSEMENU")
         
 class BMParentingLink(bpy.types.PropertyGroup):
     bone_parent: bpy.props.StringProperty(name='Parent bone', 
@@ -66,9 +66,9 @@ class BMParentingLink(bpy.types.PropertyGroup):
     parenting_update: bpy.props.BoolProperty(default=False, description="Update")
 
 
-class BMManageParenting(bpy.types.Operator):
-    bl_idname = "wm.bm_manage_parenting"
-    bl_label = "Manage Parenting"
+class BMManageRelations(bpy.types.Operator):
+    bl_idname = "wm.bm_manage_relations"
+    bl_label = "Manage Relations"
     bl_options = {'UNDO'}
 
     links: bpy.props.CollectionProperty(type=BMParentingLink)
@@ -103,7 +103,7 @@ class BMManageParenting(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label(text="All Bone Merger parentings")
+        row.label(text="All Bone Merger relations")
 
         row = layout.row()
         row.label(text="Current scene: {0}".format(bpy.context.scene.name))
@@ -286,12 +286,12 @@ class BMManualParentingPopup(bpy.types.Operator):
 def bm_ui_register():
     bpy.utils.register_class(BoneMergerPanel)
     bpy.utils.register_class(BMParentingLink)
-    bpy.utils.register_class(BMManageParenting)
+    bpy.utils.register_class(BMManageRelations)
     bpy.utils.register_class(BMManualParentingPopup)
 
 def bm_ui_unregister():
     bpy.utils.unregister_class(BMManualParentingPopup)
-    bpy.utils.unregister_class(BMManageParenting)
+    bpy.utils.unregister_class(BMManageRelations)
     bpy.utils.unregister_class(BMParentingLink)
     bpy.utils.unregister_class(BoneMergerPanel)
     
