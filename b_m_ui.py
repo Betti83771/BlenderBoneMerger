@@ -1,6 +1,6 @@
 import bpy
 from .bone_merger import b_m_checker, b_m_func, b_m_parent_rel_remove, b_m_auto_recognize_parenting, b_m_manual_register_relations
-
+from . import addon_updater_ops
 
 
 class BoneMergerPanel(bpy.types.Panel):
@@ -47,6 +47,8 @@ class BoneMergerPanel(bpy.types.Panel):
         row.operator("b_m.parent_constraint")
         row = layout.row()
         row.operator("wm.bm_manage_relations", icon="COLLAPSEMENU")
+        
+        addon_updater_ops.update_notice_box_ui(self, context)
         
 class BMParentingLink(bpy.types.PropertyGroup):
     bone_parent: bpy.props.StringProperty(name='Parent bone', 
