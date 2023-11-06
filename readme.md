@@ -9,7 +9,7 @@ Once you get used to the Bone Merger for Blender workflow it will be impossible 
 
 
 
-# The Bone Merger Panel
+## The Bone Merger Panel
 This panel gives access to the main operator of the addon, "Parent and Constraint", and its options;
 as well as access to the "Manage Relations" panel.
 Here is a descriptions of all the features of this panel:
@@ -23,6 +23,7 @@ if a bone is not specified, the whole child object will follow the parent object
 
 **New**: a new relation will be registered, granted that the parent and child are different 
 from a previously registered relation.
+
 **Overwrite**: this option allows the user to quickly change the parent of a previously
 registered relation. Upon selecting it, the user can choose which parent to overwrite in case
 of multiple parents registered.
@@ -45,7 +46,7 @@ Warning:
 **Manage Relations**: click to access the Manage Relations panel. See below.
 
 
-# The "Manage Relations" panel
+## The "Manage Relations" panel
 
 This panel allows the user to update relation informations, such as change a parent or an empty, or delete relations altogether.
 
@@ -64,7 +65,7 @@ This option may be used if one or more relations previously made with the addon 
 This option may also be used if the parenting with the empties has been done by hand, using the same method as the addon: this allows these kind of relations to be managed, changed or removed by the Bone Merger.
 Why "try"? Because it is not guaranteed to succeed, given the number of variables involved in the process and how humans may have not followed it precisely, as well as changes between different versions of the addon.
 
-# The "Bone Merger: Parent Switch" panel
+## The "Bone Merger: Parent Switch" panel
 
 This panel is only visible in pose mode of the child rig. It is currently only available if the child is a bone and not an object.
 This panel shows the influence of the Copy Transforms constraint on the bone, so that they can be animated and the relation can be switched or toggled on and off altogether.
@@ -73,7 +74,7 @@ By pressing  "I" on the influences a key will be put in place. Th epurpose of th
 **Show all**: if off, only shows the influences of the active bone. If on, shows all influences of all relations in the rig
 
 
-# Technical notes and info
+## Technical notes and info
 The relations info is stored on the child bone or on the child object if no bone is specified as a custom porperty.
 
 
@@ -81,13 +82,7 @@ The relations info is stored on the child bone or on the child object if no bone
 
 
 
-
-
-
-
-
-
-LICENSE
+## LICENSE
  ====================== BEGIN GPL LICENSE BLOCK ======================
 
   This program is free software; you can redistribute it and/or
@@ -105,7 +100,7 @@ LICENSE
 
  ======================= END GPL LICENSE BLOCK ========================
 
-CREDITS
+## CREDITS
 Addon coded by Betti Abbattista https://github.com/Betti83771
 Addon updater: https://github.com/CGCookie/blender-addon-updater
 Base idea: Corrado Piscitelli https://github.com/GigiSpligi
