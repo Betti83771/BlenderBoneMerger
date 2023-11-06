@@ -41,7 +41,7 @@ def properties_register():
                                                 description="Collections where to put the Empties")
     bpy.types.WindowManager.bm_relation_slot_ui = bpy.props.IntProperty(default=0,
                                                 min=0,
-                                                max=10,
+                                                max=50,
                                                 name='Relation slot', 
                                                 description="Choose which relation to overwrite. You can check out the slot number in the 'Manage relations' popup. The slot is recorded on the child; the child has slots, not the parent ")     
     bpy.types.WindowManager.bm_relation_mode_ui =  bpy.props.EnumProperty(name="Bone Merger Make Relation Mode",
