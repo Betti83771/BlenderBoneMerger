@@ -16,7 +16,7 @@ class BoneMergerOperator(bpy.types.Operator):
         return context.window_manager.bm_target_parent and context.window_manager.bm_target_child
 
     def execute(self, context):
-        if context.window_manager.bm_target_child.data in bpy.data.armatures.values():
+        if context.window_manager.bm_target_child.type == 'ARMATURE':
             subtarget = context.window_manager.bm_target_child.data.bones[context.window_manager.bm_subtarget_child]
             if context.window_manager.bm_relation_mode_ui == "overwrite":
                 relation_slot = context.window_manager.bm_relation_slot_ui
