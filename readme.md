@@ -80,6 +80,7 @@ By pressing  "I" on the influences a key will be put in place. Th epurpose of th
 ## Technical notes and info
 The relations info is stored on the child bone or on the child object if no bone is specified as a custom porperty.
 
+This addon was used in many production of MAD Entertainment studio, such as Food wizards and Due Battiti.
 
 
 
