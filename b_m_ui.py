@@ -151,7 +151,7 @@ class BMManageRelations(bpy.types.Operator):
 
             col = out_split.column()
             row = col.row()
-            row.prop(link, 'parenting_remove',  text="", icon='REMOVE')
+            row.prop(link, 'parenting_remove',  text="", icon='TRASH')
             row = col.row()
             row.prop(link, 'parenting_update',  text="Update", toggle=True)
 
