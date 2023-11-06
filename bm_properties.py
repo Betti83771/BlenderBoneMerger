@@ -37,7 +37,7 @@ def properties_register():
                                                 name='Target bone', 
                                                 description="Target bone")
     bpy.types.WindowManager.bm_empty_collection = bpy.props.PointerProperty(type=bpy.types.Collection,
-                                                name='Empties collections', 
+                                                name='Empties collection', 
                                                 description="Collections where to put the Empties")
     bpy.types.WindowManager.bm_relation_slot_ui = bpy.props.IntProperty(default=0,
                                                 min=0,
