@@ -13,7 +13,8 @@ Once you get used to the Bone Merger for Blender workflow it will be impossible 
 ## The Bone Merger Panel
 This panel gives access to the main operator of the addon, "Parent and Constraint", and its options;
 as well as access to the "Manage Relations" panel.
-Here is a descriptions of all the features of this panel:
+
+![immagine](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/32e1b485-502f-47a5-b9aa-a172cda8820e)
 
 **Parent**: The parent object of this relation. If it's an armature, a bone field will appear.
 **Parent bone**: the bone of the parent armature which will be the parent in this relation.
@@ -51,6 +52,9 @@ Warning:
 ## The "Manage Relations" panel
 
 This panel allows the user to update relation informations, such as change a parent or an empty, or delete relations altogether.
+
+![immagine](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/770fad57-f2c3-4c70-89b7-e24c0d84170e)
+
 
 **Update**
 Note: the child can't be changed since the data of the relation is stored on the child.
