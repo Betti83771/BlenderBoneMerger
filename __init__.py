@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Bone Merger",
     "author": "Betti",
-    "version": (2, 6),
+    "version": (3, 0),
     "blender": (2, 80, 0),
     "location": "View3D > Bone Merger",
     "description": """!!! DO NOT HESITATE TO REPORT ANY BUGS !!! Especially if the bug slows you down in the production. Use the button below""",
