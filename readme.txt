@@ -20,4 +20,4 @@ CREDITS
 Addon coded by Betti Abbattista https://github.com/Betti83771
 Addon updater: https://github.com/CGCookie/blender-addon-updater
 Base idea: Corrado Piscitelli https://github.com/GigiSpligi
-Name idea: Gmod addon
+Name idea: Gmod addon https://steamcommunity.com/sharedfiles/filedetails/?id=104601200
