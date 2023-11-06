@@ -4,10 +4,11 @@ The Bone Merger for Blender is an useful addon for all the animators who are tir
 
 Sure enough, this addon allows to dynamically contruct relations between bones of different rigs; it makes use of a chain of parented and constrained empties (shown in detial in the image below).
 
+![bone_merger_explanation](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/3647b2a1-0e03-4a35-9366-284b08d3bfb1)
+
 One object or bone (child) can have multiple parents; the "Parent Switch" panel allows the user to switch parents on the fly, just by putting a keyframe on the right constraint influences; switching parent is one keyframe away and it can also be esaed, animated and mixed since it's a gradual influence going from 0 to 1.
 
 Once you get used to the Bone Merger for Blender workflow it will be impossible to animate without it!
-
 
 
 ## The Bone Merger Panel
