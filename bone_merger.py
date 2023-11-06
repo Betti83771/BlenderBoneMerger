@@ -42,10 +42,10 @@ class BoneMergerOperator(bpy.types.Operator):
                  context.window_manager.bm_subtarget_child,
                  context.window_manager.bm_target_parent,
                  context.window_manager.bm_target_child,
+                 relation_slot,
                  context.window_manager.bm_empty_collection,
                  context.window_manager.bm_use_snap,
                  context.window_manager.bm_hide_empties,
-                relation_slot
             )
 
         return {'FINISHED'}
@@ -244,8 +244,12 @@ def b_m_checker():
 def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent_str, arm_child_str, rel_i): 
     arm_child = bpy.data.objects[arm_child_str]
     name_suffix = (str(rel_i).zfill(2))
+    if arm_child.type == 'ARMATURE' and bone_child != "":
+        bone_child_present = True
+    else:
+        bone_child_present = False
 
-    if bone_child != "":
+    if bone_child_present:
         relation = next((rel for rel in arm_child.data.bones[bone_child].bm_relations if rel.bm_relation_slot == rel_i), None)
         bm_parent_empty = relation.bm_parent_empty
         bm_child_empty = relation.bm_child_empty
@@ -265,7 +269,7 @@ def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent_str, arm_child_st
         bpy.data.objects.remove(bpy.data.objects[bm_child_empty])
     
     
-    if bone_child != "":
+    if bone_child_present:
         const2 = next((const for const in arm_child.pose.bones[bone_child].constraints if const.name == 'bm_const2_' + name_suffix), None)
         if const2:
             arm_child.pose.bones[bone_child].constraints.remove(const2)
@@ -274,7 +278,9 @@ def b_m_parent_rel_remove(bone_parent, bone_child,  arm_parent_str, arm_child_st
         if const2:
             arm_child.constraints.remove(const2)
 
-    if bone_child != "":
+    #TODO: What about the drivers?
+
+    if bone_child_present:
         index = arm_child.data.bones[bone_child].bm_relations.find(relation.name)
         arm_child.data.bones[bone_child].bm_relations.remove(index)
     
