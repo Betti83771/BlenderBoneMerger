@@ -36,6 +36,9 @@ def properties_register():
     bpy.types.WindowManager.bm_subtarget_child = bpy.props.StringProperty(default="",
                                                 name='Target bone', 
                                                 description="Target bone")
+    bpy.types.WindowManager.bm_empty_collection = bpy.props.PointerProperty(type=bpy.types.Collection,
+                                                name='Empties collections', 
+                                                description="Collections where to put the Empties")
     bpy.types.WindowManager.bm_relation_slot_ui = bpy.props.IntProperty(default=0,
                                                 min=0,
                                                 max=10,
@@ -59,11 +62,14 @@ def properties_register():
                                                             override={'LIBRARY_OVERRIDABLE', 'USE_INSERTION'})                      
 
 def properties_unregister():
-    del bpy.types.WindowManager.bm_target_parent
-    del bpy.types.WindowManager.bm_subtarget_parent
-    del bpy.types.WindowManager.bm_target_child
-    del bpy.types.WindowManager.bm_subtarget_child
+    del bpy.types.Bone.bm_relations
+    del bpy.types.WindowManager.bm_hide_empties
+    del bpy.types.WindowManager.bm_use_snap
     del bpy.types.WindowManager.bm_relation_mode_ui
     del bpy.types.WindowManager.bm_relation_slot_ui
-    del bpy.types.Bone.bm_relations
+    del bpy.types.WindowManager.bm_empty_collection
+    del bpy.types.WindowManager.bm_subtarget_child
+    del bpy.types.WindowManager.bm_target_child
+    del bpy.types.WindowManager.bm_subtarget_parent
+    del bpy.types.WindowManager.bm_target_parent
     bpy.utils.unregister_class(BMRelations)
