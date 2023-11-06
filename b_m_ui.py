@@ -44,6 +44,13 @@ class BoneMergerPanel(bpy.types.Panel):
         row = layout.row()
         row.prop(context.window_manager, 'bm_hide_empties')
         row = layout.row()
+        split1 = row.split(align=True, factor=0.50)
+        col= split1.column()
+        col.label(text="Empties collection:")
+        col= split1.column()
+        col.prop(context.window_manager, 'bm_empty_collection', text="")
+    
+        row = layout.row()
         row.operator("b_m.parent_constraint")
         row = layout.row()
         row.operator("wm.bm_manage_relations", icon="COLLAPSEMENU")
