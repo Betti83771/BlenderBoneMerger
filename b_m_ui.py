@@ -142,8 +142,12 @@ class BMManageRelations(bpy.types.Operator):
             row7.row().label(text="Relation index:")
         
             col = split.column()
-            col.row().prop(link , "bone_child", text="")
-            col.row().prop(link, "arm_child", text="")
+            row = col.row()
+            row.active = False
+            row.prop(link , "bone_child", text="")
+            row = col.row()
+            row.active = False
+            row.prop(link, "arm_child", text="")
             col.row().prop(link, "empty_child", text="")
             col.row().prop(link, "empty_parent", text="")
             col.row().prop(link, "arm_parent", text="")
