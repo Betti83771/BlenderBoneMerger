@@ -33,11 +33,13 @@ class BoneMergerOperator(bpy.types.Operator):
                 else:
                     relation_slot = 0
 
-        b_m_func(context.window_manager.bm_subtarget_parent, 
+        b_m_func(context,
+            context.window_manager.bm_subtarget_parent, 
             context.window_manager.bm_subtarget_child, 
             context.window_manager.bm_target_parent, 
             context.window_manager.bm_target_child, 
             relation_slot,
+            context.window_manager.bm_empty_collection,
             use_snap=context.window_manager.bm_use_snap, 
             hide_empties=context.window_manager.bm_hide_empties)
 
@@ -46,11 +48,18 @@ class BoneMergerOperator(bpy.types.Operator):
 def snap_objs(to_snap, target):
     to_snap.matrix_world =  target.matrix_world
 
-def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=False, hide_empties=True):
+def b_m_func(context, bone_parent, bone_child,  arm_parent, arm_child, rel_i, empties_coll, use_snap=False, hide_empties=True):
+    
+    
     if arm_child.type == 'ARMATURE' and bone_child != "":
         bone_child_present = True
     else:
         bone_child_present = False
+
+    if not empties_coll:
+        empties_coll = bpy.data.collections.new("bm_empties")
+        context.scene.collection.children.link(empties_coll)
+        context.window_manager.bm_empty_collection = empties_coll
 
     if bone_child_present:
         relation = next((rel for rel in arm_child.data.bones[bone_child].bm_relations if rel.bm_relation_slot == rel_i), None)
@@ -92,7 +101,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=Fa
         empty1 = bpy.data.objects.new(arm_parent.name + "_" + bone_parent, None)
         empty1.empty_display_type = 'CUBE'
         empty1.empty_display_size = size
-        bpy.context.scene.collection.objects.link(empty1)
+        empties_coll.objects.link(empty1)
         if bone_parent != "":
             matrix_1 = arm_parent.pose.bones[bone_parent].matrix.copy()
             empty1.matrix_world = arm_parent.matrix_world @ matrix_1
@@ -113,7 +122,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=Fa
         empty2 = bpy.data.objects.new(arm_child.name + "_" + bone_child, None )
         empty2.empty_display_type = 'SPHERE'
         empty2.empty_display_size = size
-        bpy.context.scene.collection.objects.link(empty2)
+        empties_coll.objects.link(empty2)
         if bone_child_present:
             matrix_2 = arm_child.pose.bones[bone_child].matrix.copy()
             empty2.matrix_world = arm_child.matrix_world @ matrix_2
