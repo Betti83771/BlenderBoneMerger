@@ -34,22 +34,22 @@ class BoneMergerOperator(bpy.types.Operator):
                     relation_slot = 0
 
         b_m_func(context,
-            context.window_manager.bm_subtarget_parent, 
-            context.window_manager.bm_subtarget_child, 
-            context.window_manager.bm_target_parent, 
-            context.window_manager.bm_target_child, 
-            relation_slot,
-            context.window_manager.bm_empty_collection,
-            use_snap=context.window_manager.bm_use_snap, 
-            hide_empties=context.window_manager.bm_hide_empties)
+            relation_slot
+            )
 
         return {'FINISHED'}
 
 def snap_objs(to_snap, target):
     to_snap.matrix_world =  target.matrix_world
 
-def b_m_func(context, bone_parent, bone_child,  arm_parent, arm_child, rel_i, empties_coll, use_snap=False, hide_empties=True):
-    
+def b_m_func(context, rel_i):
+    bone_parent = context.window_manager.bm_subtarget_parent
+    bone_child = context.window_manager.bm_subtarget_child
+    arm_parent = context.window_manager.bm_target_parent
+    arm_child = context.window_manager.bm_target_child
+    empties_coll = context.window_manager.bm_empty_collection
+    use_snap = context.window_manager.bm_use_snap
+    hide_empties = context.window_manager.bm_hide_empties
     
     if arm_child.type == 'ARMATURE' and bone_child != "":
         bone_child_present = True
