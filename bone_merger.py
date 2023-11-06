@@ -32,9 +32,20 @@ class BoneMergerOperator(bpy.types.Operator):
                     relation_slot = len(props)
                 else:
                     relation_slot = 0
+        
+        if not context.window_manager.bm_empty_collection:
+            empties_coll = bpy.data.collections.new("bm_empties")
+            context.scene.collection.children.link(empties_coll)
+            context.window_manager.bm_empty_collection = empties_coll
 
-        b_m_func(context,
-            relation_slot
+        b_m_func(context.window_manager.bm_subtarget_parent,
+                 context.window_manager.bm_subtarget_child,
+                 context.window_manager.bm_target_parent,
+                 context.window_manager.bm_target_child,
+                 context.window_manager.bm_empty_collection,
+                 context.window_manager.bm_use_snap,
+                 context.window_manager.bm_hide_empties,
+                relation_slot
             )
 
         return {'FINISHED'}
@@ -42,24 +53,16 @@ class BoneMergerOperator(bpy.types.Operator):
 def snap_objs(to_snap, target):
     to_snap.matrix_world =  target.matrix_world
 
-def b_m_func(context, rel_i):
-    bone_parent = context.window_manager.bm_subtarget_parent
-    bone_child = context.window_manager.bm_subtarget_child
-    arm_parent = context.window_manager.bm_target_parent
-    arm_child = context.window_manager.bm_target_child
-    empties_coll = context.window_manager.bm_empty_collection
-    use_snap = context.window_manager.bm_use_snap
-    hide_empties = context.window_manager.bm_hide_empties
+def b_m_func(bone_parent, bone_child, arm_parent,
+             arm_child, rel_i, empties_coll,
+             use_snap=False, hide_empties=True):
     
     if arm_child.type == 'ARMATURE' and bone_child != "":
         bone_child_present = True
     else:
         bone_child_present = False
 
-    if not empties_coll:
-        empties_coll = bpy.data.collections.new("bm_empties")
-        context.scene.collection.children.link(empties_coll)
-        context.window_manager.bm_empty_collection = empties_coll
+    
 
     if bone_child_present:
         relation = next((rel for rel in arm_child.data.bones[bone_child].bm_relations if rel.bm_relation_slot == rel_i), None)
