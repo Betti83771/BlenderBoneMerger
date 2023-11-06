@@ -25,11 +25,11 @@ class BMRelations(bpy.types.PropertyGroup):
 def properties_register():
     bpy.utils.register_class(BMRelations)
     bpy.types.WindowManager.bm_target_parent = bpy.props.PointerProperty(type=bpy.types.Object,
-                                                name='Starting armature', 
-                                                description="Starting armature")
+                                                name='Parent armature', 
+                                                description="Parent armature")
     bpy.types.WindowManager.bm_subtarget_parent = bpy.props.StringProperty(default="",
-                                                name='Starting bone', 
-                                                description="Starting bone")
+                                                name='Parent bone', 
+                                                description="Parent bone")
     bpy.types.WindowManager.bm_target_child = bpy.props.PointerProperty(type=bpy.types.Object,
                                                 name='Target armature', 
                                                 description="Target armature")
