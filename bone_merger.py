@@ -47,14 +47,19 @@ def snap_objs(to_snap, target):
     to_snap.matrix_world =  target.matrix_world
 
 def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=False, hide_empties=True):
-    if bone_child != "":
+    if arm_child.type == 'ARMATURE' and bone_child != "":
+        bone_child_present = True
+    else:
+        bone_child_present = False
+
+    if bone_child_present:
         relation = next((rel for rel in arm_child.data.bones[bone_child].bm_relations if rel.bm_relation_slot == rel_i), None)
    
         if not relation:
             relation = arm_child.data.bones[bone_child].bm_relations.add()
             relation.bm_relation_slot = rel_i
     name_suffix = (str(rel_i).zfill(2))
-    if bone_child != "":
+    if bone_child_present:
         bm_parent_empty = relation.bm_parent_empty
         bm_child_empty = relation.bm_child_empty
     else:
@@ -97,7 +102,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=Fa
     if bm_child_empty != "" and bm_child_empty in bpy.data.objects.keys():
         empty2 = bpy.data.objects[bm_child_empty]
     else:
-        if bone_child != "":
+        if bone_child_present:
             size = arm_child.data.bones[bone_child].length * 1.2
         else:
             if arm_child.dimensions.z == 0.0:
@@ -109,7 +114,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=Fa
         empty2.empty_display_type = 'SPHERE'
         empty2.empty_display_size = size
         bpy.context.scene.collection.objects.link(empty2)
-        if bone_child != "":
+        if bone_child_present:
             matrix_2 = arm_child.pose.bones[bone_child].matrix.copy()
             empty2.matrix_world = arm_child.matrix_world @ matrix_2
         else:
@@ -126,7 +131,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=Fa
 
     #make the constraints
     const1 = next((const for const in empty1.constraints if const.name == 'bm_const1_{0}'.format(str(rel_i).zfill(2))), None)
-    if bone_child != "":
+    if bone_child_present:
         const2 = next((const for const in arm_child.pose.bones[bone_child].constraints if const.name == 'bm_const2_{0}'.format(str(rel_i).zfill(2))), None)
     else:
         const2 = next((const for const in arm_child.constraints if const.name == 'bm_const2_{0}'.format(str(rel_i).zfill(2))), None)
@@ -136,7 +141,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=Fa
     const1.target = arm_parent
     const1.subtarget = bone_parent
     if not const2:
-        if bone_child != "":
+        if bone_child_present:
             const2 = arm_child.pose.bones[bone_child].constraints.new(type='COPY_TRANSFORMS')
         else:
             const2 = arm_child.constraints.new(type='COPY_TRANSFORMS')
@@ -151,7 +156,7 @@ def b_m_func(bone_parent, bone_child,  arm_parent, arm_child, rel_i, use_snap=Fa
 
     #set the external parent and empty properties
    
-    if bone_child != "":
+    if bone_child_present:
         relation.bm_external_armature = arm_parent.name
         if bone_parent != "":
             relation.bm_external_parent = bone_parent
