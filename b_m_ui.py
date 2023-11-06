@@ -89,25 +89,25 @@ class BMManageRelations(bpy.types.Operator):
         self.links.clear()
         bm_chk_dict = b_m_checker()
         for link in bm_chk_dict.keys():
-                new = self.links.add()
+            new = self.links.add()
 
-                new.bone_parent = bm_chk_dict[link][5]
+            new.bone_parent = bm_chk_dict[link][5]
 
-                if bm_chk_dict[link][0] == 'BONE':
-                    new.bone_child = link[0]
+            if bm_chk_dict[link][0] == 'BONE':
+                new.bone_child = link[0]
 
-                new.arm_parent = bm_chk_dict[link][4]
+            new.arm_parent = bm_chk_dict[link][4]
 
-                if bm_chk_dict[link][0] == 'BONE':
-                    new.arm_child = bm_chk_dict[link][1]
-                else:
-                    new.arm_child = link[0]
+            if bm_chk_dict[link][0] == 'BONE':
+                new.arm_child = bm_chk_dict[link][1]
+            else:
+                new.arm_child = link[0]
 
-                new.empty_parent = bm_chk_dict[link][2]
+            new.empty_parent = bm_chk_dict[link][2]
 
-                new.empty_child = bm_chk_dict[link][3]
+            new.empty_child = bm_chk_dict[link][3]
 
-                new.relation_slot = link[1]
+            new.relation_slot = link[1]
 
 
     def draw(self, context):
@@ -116,7 +116,7 @@ class BMManageRelations(bpy.types.Operator):
         row.label(text="All Bone Merger relations")
 
         row = layout.row()
-        row.label(text="Current scene: {0}".format(bpy.context.scene.name))
+        row.label(text="Current scene: {0}".format(context.scene.name))
 
         
 
@@ -198,7 +198,11 @@ class BMManageRelations(bpy.types.Operator):
 
             if link.parenting_update:
                link.parenting_update = False
-               b_m_func(link.bone_parent, link.bone_child,  bpy.data.objects[link.arm_parent], bpy.data.objects[link.arm_child], link.relation_slot)
+               empties_coll = next((coll for coll in bpy.data.collections if link.empty_parent in coll.objects), None)
+               if not empties_coll:
+                   empties_coll = bpy.data.collections.new("bm_empties")
+                   context.scene.collection.children.link(empties_coll)
+               b_m_func(link.bone_parent, link.bone_child,  bpy.data.objects[link.arm_parent], bpy.data.objects[link.arm_child], link.relation_slot, empties_coll)
                changed = True 
                #TODO: if child/parent change, do you want to change the empty's name?
         return changed
