@@ -3,6 +3,7 @@
 The Bone Merger for Blender is an useful addon for all the animators who are tired of props that don't follow their characters, of not being able to animate people people picking up things smoothly, and of objects that cannot change parent.
 
 Sure enough, this addon allows to dynamically contruct relations between bones of different rigs; it makes use of a chain of parented and constrained empties (shown in detial in the image below).
+
 One object or bone (child) can have multiple parents; the "Parent Switch" panel allows the user to switch parents on the fly, just by putting a keyframe on the right constraint influences; switching parent is one keyframe away and it can also be esaed, animated and mixed since it's a gradual influence going from 0 to 1.
 
 Once you get used to the Bone Merger for Blender workflow it will be impossible to animate without it!
@@ -33,6 +34,7 @@ However, it is advised to occupy the next index in order and not skip any indexe
 
 **Snap empty on parent**: check this box to snap the child on the parent. Useful if the user isn't
 seeking an offset effect.
+
 **Hide new empties**: check this box to automatically hide the newly created empties from the viewport.
 
 **Empties collection**: select the collection where the empties will be linked. If no collection is
@@ -63,6 +65,7 @@ Prompts empty fields to register an existing relation manually if it's not appea
 **Try auto recognize parenting**
 This option may be used if one or more relations previously made with the addon have lost their parenting info and aren't shown in the Manage Relations panel.
 This option may also be used if the parenting with the empties has been done by hand, using the same method as the addon: this allows these kind of relations to be managed, changed or removed by the Bone Merger.
+
 Why "try"? Because it is not guaranteed to succeed, given the number of variables involved in the process and how humans may have not followed it precisely, as well as changes between different versions of the addon.
 
 ## The "Bone Merger: Parent Switch" panel
@@ -71,7 +74,7 @@ This panel is only visible in pose mode of the child rig. It is currently only a
 This panel shows the influence of the Copy Transforms constraint on the bone, so that they can be animated and the relation can be switched or toggled on and off altogether.
 By pressing  "I" on the influences a key will be put in place. Th epurpose of the panel is to quickly animate the influences while animating the rest of the character.
 
-**Show all**: if off, only shows the influences of the active bone. If on, shows all influences of all relations in the rig
+**Show all**: if off, only shows the influences of the active bone. If on, shows all influences of all relations in the rig.
 
 
 ## Technical notes and info
@@ -102,8 +105,11 @@ The relations info is stored on the child bone or on the child object if no bone
 
 ## CREDITS
 Addon coded by Betti Abbattista https://github.com/Betti83771
+
 Addon updater: https://github.com/CGCookie/blender-addon-updater
+
 Base idea: Corrado Piscitelli https://github.com/GigiSpligi
+
 Name idea: Gmod addon https://steamcommunity.com/sharedfiles/filedetails/?id=104601200
 
 
