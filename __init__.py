@@ -22,8 +22,7 @@ bl_info = {
     "version": (2, 6),
     "blender": (2, 80, 0),
     "location": "View3D > Bone Merger",
-    "description": """Creates a chain of parenting between two bones, placing two intermediary empties
-!!! DO NOT HESITATE TO REPORT ANY BUGS !!! Especially if the bug slows you down in the production PLZ PLZ PLZ REPORT""",
+    "description": """!!! DO NOT HESITATE TO REPORT ANY BUGS !!! Especially if the bug slows you down in the production. Use the button below""",
     "warning": "",
     "doc_url": "https://github.com/Betti83771/BlenderBoneMerger",
     "tracker_url": "https://github.com/Betti83771/BlenderBoneMerger/issues",
