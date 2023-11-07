@@ -102,6 +102,7 @@ class UpdaterPreferences(bpy.types.AddonPreferences):
 
 def register():
     addon_updater_ops.register(bl_info)
+    bpy.utils.register_class(UpdaterPreferences)
     properties_register()
     bpy.utils.register_class(BoneMergerOperator)
     bm_ui_register()
@@ -112,6 +113,7 @@ def unregister():
     bm_ui_unregister()
     bpy.utils.unregister_class(BoneMergerOperator)
     properties_unregister()
+    bpy.utils.unregister_class(UpdaterPreferences)
     addon_updater_ops.unregister(bl_info)
 
 if __name__ == "__main__":
