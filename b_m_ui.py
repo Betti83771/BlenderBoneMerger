@@ -5,7 +5,7 @@ from . import addon_updater_ops
 
 class BoneMergerPanel(bpy.types.Panel):
     """Creates a Panel that houses the buttons  """
-    bl_label = "Bone Merger v2.6"
+    bl_label = "Bone Merger v3.0"
     bl_idname = "OBJECT_PT_BMPanel"
     bl_space_type = 'VIEW_3D'
     bl_category = "Bone Merger"
@@ -13,6 +13,10 @@ class BoneMergerPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+
+        addon_updater_ops.check_for_update_background()
+        addon_updater_ops.update_notice_box_ui(self, context)
+
         row = layout.row()
         row.label(text="Parent and constraint")
         row = layout.row()
@@ -56,7 +60,6 @@ class BoneMergerPanel(bpy.types.Panel):
         row = layout.row()
         row.operator("wm.bm_manage_relations", icon="COLLAPSEMENU")
         
-        addon_updater_ops.update_notice_box_ui(self, context)
         
 class BMParentingLink(bpy.types.PropertyGroup):
     bone_parent: bpy.props.StringProperty(name='Parent bone', 
