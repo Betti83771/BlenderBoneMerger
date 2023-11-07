@@ -5,10 +5,10 @@ import bpy
 class BMRelations(bpy.types.PropertyGroup):
     bm_external_parent: bpy.props.StringProperty(default="",
                                                 name='External parent', 
-                                                description="External parent")
+                                                description="The parent bone")
     bm_external_armature: bpy.props.StringProperty(default="",
                                                 name='External armature', 
-                                                description="External armature") 
+                                                description="The parent armature") 
     bm_child_empty: bpy.props.StringProperty(default="",
                                                 name='Child empty', 
                                                 description="Child empty")    
