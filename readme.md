@@ -2,7 +2,15 @@
 
 The Bone Merger for Blender is an useful addon for all the animators who are tired of props that don't follow their characters, of not being able to animate people people picking up things smoothly, and of objects that cannot change parent.
 
-Sure enough, this addon allows to dynamically contruct relations between bones of different rigs; it makes use of a chain of parented and constrained empties (shown in detial in the image below).
+Sure enough, this addon allows to dynamically contruct relations between bones of different rigs. 
+
+![Demonstr1](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/4e7ba374-0cf9-4c7d-8428-7c2f92edd8b0)
+![Demonstr2](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/0b94337a-da33-41ce-a406-1a6823fa35ba)
+
+
+![Demonstr3](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/57bd68b0-80f9-4dcb-b97e-7491e37dc48d)
+
+This addon makes use of a chain of parented and constrained empties (shown in detial in the image below).
 
 ![bone_merger_explanation](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/3647b2a1-0e03-4a35-9366-284b08d3bfb1)
 
