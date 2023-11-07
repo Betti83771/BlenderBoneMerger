@@ -34,6 +34,9 @@ Note: due to Blender limitations, the scrubbing is not limited to existing paren
 may "overwrite" an empty index that shows no parent name and it will count as a new relation.
 However, it is advised to occupy the next index in order and not skip any indexes.
 
+![immagine](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/c7c71775-1b50-4399-ac06-4cae5bcf6ccb)
+
+
 **Snap empty on parent**: check this box to snap the child on the parent. Useful if the user isn't
 seeking an offset effect.
 
@@ -46,6 +49,8 @@ specified, a new collection by the name of "bm_empties" will be created in the s
 
 Warning:
 - If you change the name of the empties or the bones after the relation is registrerd, you have to update them by clicking on "manage relations", typing the new namesw in the respective fields, then clicking "update".
+
+Note: thanks to CGCookie's addon updater included in this addon, when you open this panel and a new version of the addon has been released, it will prompt you the possibility of update it immediately. You need to enable "auto-check" in the addon preferences for this check to occur automatically.
 
 **Manage Relations**: click to access the Manage Relations panel. See below.
 
@@ -75,12 +80,18 @@ Why "try"? Because it is not guaranteed to succeed, given the number of variable
 
 ## The "Bone Merger: Parent Switch" panel
 
+![immagine](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/8576682c-6ffb-4868-8017-1851b42d287f)
+
 This panel is only visible in pose mode of the child rig. It is currently only available if the child is a bone and not an object.
 This panel shows the influence of the Copy Transforms constraint on the bone, so that they can be animated and the relation can be switched or toggled on and off altogether.
 By pressing  "I" on the influences a key will be put in place. Th epurpose of the panel is to quickly animate the influences while animating the rest of the character.
 
 **Show all**: if off, only shows the influences of the active bone. If on, shows all influences of all relations in the rig.
 
+## The addon updater
+This addon can be updated to it latest release from within Blender. The addon update options are in the "Preferences" panel, the one in the Prefrences window of Blender. It's the panel that appears when you enable the Addon:
+
+![immagine](https://github.com/Betti83771/BlenderBoneMerger/assets/76520778/e893c0eb-75c5-409b-b850-afdf805a82ce)
 
 ## Technical notes and info
 The relations info is stored on the child bone or on the child object if no bone is specified as a custom porperty.
