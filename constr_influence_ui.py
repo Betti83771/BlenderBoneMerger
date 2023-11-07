@@ -26,7 +26,7 @@ class ParentSwitchPanel(bpy.types.Panel):
         row = layout.row()
         row.prop(context.window_manager, "bm_parsw_use_showall")
 
-        split = layout.split(factor=0.35)
+        split = layout.split(factor=0.25)
         col1 = split.column()
         col2 = split.column()
 
@@ -44,7 +44,7 @@ class ParentSwitchPanel(bpy.types.Panel):
                 bm_rels = context.object.data.bones[posebone.name].bm_relations
                 rel = next((rel for rel in bm_rels if rel.bm_child_empty == constraint.target.name), None)
                 if rel:
-                    infl_label = "rel.bm_external_parent" + " (" +"rel.bm_external_armature" + ") "
+                    infl_label = rel.bm_external_parent + " (" +rel.bm_external_armature + ") "
                 else:
                     infl_label = "Unknown parent"
                 
