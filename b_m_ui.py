@@ -38,10 +38,16 @@ class BoneMergerPanel(bpy.types.Panel):
         row.prop(context.window_manager, 'bm_relation_mode_ui', expand=True)
         if context.window_manager.bm_relation_mode_ui == "overwrite":
             if context.window_manager.bm_subtarget_child and context.window_manager.bm_target_child:
-                parent = next((rel.bm_external_armature for rel in context.window_manager.bm_target_child.data.bones[context.window_manager.bm_subtarget_child].bm_relations if rel.bm_relation_slot == context.window_manager.bm_relation_slot_ui), "")
+                relation = next((rel for rel in context.window_manager.bm_target_child.data.bones[context.window_manager.bm_subtarget_child].bm_relations if rel.bm_relation_slot == context.window_manager.bm_relation_slot_ui), None)
+                if relation:
+                    arm_parent = relation.bm_external_armature
+                    bone_parent = relation.bm_external_parent
+                    label = f"Overwriting parent: {bone_parent} ({arm_parent})"
+                else: 
+                    label = "New relation"
               #  row.label(text="Overwriting parent: " + parent)
             row = layout.row()
-            row.prop(context.window_manager, 'bm_relation_slot_ui', text="Overwriting parent: " + parent)
+            row.prop(context.window_manager, 'bm_relation_slot_ui', text=label)
             
             
         row = layout.row()

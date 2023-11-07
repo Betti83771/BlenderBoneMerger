@@ -42,12 +42,17 @@ class ParentSwitchPanel(bpy.types.Panel):
 
             for constraint in constraints:
                 bm_rels = context.object.data.bones[posebone.name].bm_relations
-                target = next((rel.bm_external_armature for rel in bm_rels if rel.bm_child_empty == constraint.target.name), "Unknown parent")
+                rel = next((rel for rel in bm_rels if rel.bm_child_empty == constraint.target.name), None)
+                if rel:
+                    infl_label = "rel.bm_external_parent" + " (" +"rel.bm_external_armature" + ") "
+                else:
+                    infl_label = "Unknown parent"
+                
                 row = col1.row()
                 row.label(text=posebone.name)
 
                 row = col2.row()
-                row.prop(constraint, 'influence', text =target)
+                row.prop(constraint, 'influence', text=infl_label)
 
 def constr_influence_panel_register():
     bpy.types.WindowManager.bm_parsw_use_showall = bpy.props.BoolProperty(name = "Show all", 
