@@ -1,6 +1,8 @@
 # The Bone Merger Addon for Blender
 
-The Bone Merger for Blender is an useful addon for all the animators who are tired of props that don't follow their characters, of not being able to animate people people picking up things smoothly, and of objects that cannot change parent.
+The Bone Merger for Blender is an useful addon for animators. Its final purose is to parent a bone from a rig to a bone from another rig.  
+It can also be used to parent bone to object and vice versa, if an objcet different from an armature is specified.  
+This allows, for example, for props that follow characters hands; pieces of clothing, such as a hat that can follow the character's head; characters picking up things; and even changing a prop's parent, such as an object passing from hand to hand.  
 
 Sure enough, this addon allows to dynamically contruct relations between bones of different rigs. 
 
