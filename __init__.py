@@ -114,7 +114,7 @@ def unregister():
     bpy.utils.unregister_class(BoneMergerOperator)
     properties_unregister()
     bpy.utils.unregister_class(UpdaterPreferences)
-    addon_updater_ops.unregister(bl_info)
+    addon_updater_ops.unregister()
 
 if __name__ == "__main__":
     register()
